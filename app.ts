@@ -3,6 +3,7 @@ import * as flags from "https://deno.land/std/flags/mod.ts";
 import { Client } from "https://deno.land/x/postgres/mod.ts";
 import "https://deno.land/x/dotenv/load.ts";
 console.log(Deno.env.get("GREETING"));
+console.log(Deno.env.get("DATABASE_URL"));
 
 const DEFAULT_PORT = 8080;
 const argPort = flags.parse(Deno.args).port;
