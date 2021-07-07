@@ -14,9 +14,9 @@ router
     ctx.response.body = `Hello Knyte World! Deno ${Deno.version.deno} is in charge!\n`;
   })
   .get("/knytes", (ctx) => {
-    await client.connect();
-    const result = await client.queryObject("SELECT ID, NAME FROM PEOPLE");
-    await client.end();
+    await db.connect();
+    const result = await db.queryObject("SELECT ID, NAME FROM PEOPLE");
+    await db.end();
     ctx.response.body = result.rows;
     console.log(result);
   });
