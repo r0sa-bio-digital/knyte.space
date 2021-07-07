@@ -13,7 +13,7 @@ router
   .get("/ping", (ctx) => {
     ctx.response.body = `Hello Knyte World! Deno ${Deno.version.deno} is in charge!\n`;
   })
-  .get("/knytes", (ctx) => {
+  .get("/knytes", async (ctx) => {
     await db.connect();
     const result = await db.queryObject("SELECT ID, NAME FROM PEOPLE");
     await db.end();
