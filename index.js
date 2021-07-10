@@ -14,12 +14,10 @@ router.get('/', async (ctx) => {
     };
 });
 router.get('/knytes', async (ctx) => {
-    pgClient.connect();
-    const query = pgClient.query("SELECT * from knytes");
-    ctx.body = {
-        query: query
-    };
-    pgClient.end();
+    await pgClient.connect();
+    const result = await client.query('SELECT NOW()');
+    await pgClient.end();
+    ctx.body = {result};
 });
 
 app.use(router.routes());
