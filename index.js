@@ -18,7 +18,7 @@ router.get('/', async (ctx) => {
         message: 'hello world from knyte.space!'
     };
 });
-router.get('/knytes', async (ctx) => {
+router.get('/now', async (ctx) => {
     try {
         await pgClient.connect();
         console.log('connected');
@@ -28,7 +28,30 @@ router.get('/knytes', async (ctx) => {
     let result = {};
     try {
         const queryString = 'SELECT NOW()';
-        result = await pgClient.query(queryString);
+        result = (await pgClient.query(queryString)).rows;
+        console.log('query done: ' + queryString);
+    } catch (e) {
+        console.warn(e);
+    }
+    try {
+        await pgClient.end();
+        console.log('disconnected');
+    } catch(e) {
+        console.warn(e);
+    }
+    ctx.body = {result};
+});
+router.get('/knytes', async (ctx) => {
+    try {
+        await pgClient.connect();
+        console.log('connected');
+    } catch(e) {
+        console.warn(e);
+    }
+    let result = {};
+    try {
+        const queryString = 'SELECT * FROM knytes';
+        result = (await pgClient.query(queryString)).rows;
         console.log('query done: ' + queryString);
     } catch (e) {
         console.warn(e);
