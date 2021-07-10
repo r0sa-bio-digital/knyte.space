@@ -25,7 +25,14 @@ router.get('/knytes', async (ctx) => {
     } catch(e) {
         console.warn(e);
     }
-    const result = await pgClient.query('SELECT NOW()');
+    let result = {};
+    try {
+        const queryString = 'SELECT NOW()';
+        result = await pgClient.query(queryString);
+        console.log('query done: ' + queryString);
+    } catch (e) {
+        console.warn(e);
+    }
     try {
         await pgClient.end();
         console.log('disconnected');
