@@ -6,12 +6,6 @@ const connectionString = process.env.DATABASE_URL;
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
 const router = new Router();
-const pgClient = new PG.Client({
-    connectionString,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
 
 router.get('/', async (ctx) => {
         ctx.body = {
@@ -19,6 +13,12 @@ router.get('/', async (ctx) => {
     };
 });
 router.get('/now', async (ctx) => {
+    const pgClient = new PG.Client({
+        connectionString,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    });    
     try {
         await pgClient.connect();
         console.log('connected');
@@ -42,6 +42,12 @@ router.get('/now', async (ctx) => {
     ctx.body = {result};
 });
 router.get('/knytes', async (ctx) => {
+    const pgClient = new PG.Client({
+        connectionString,
+        ssl: {
+            rejectUnauthorized: false
+        }
+    });    
     try {
         await pgClient.connect();
         console.log('connected');
