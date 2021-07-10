@@ -1,5 +1,9 @@
 const Koa = require('koa');
 const Router = require('koa-router');
+//const PG = require('pg');
+const connectionString = process.env.GREETING;
+console.log('connectionString');
+console.log(connectionString);
 
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
@@ -7,8 +11,7 @@ const router = new Router();
 
 router.get('/', async (ctx) => {
     ctx.body = {
-      status: 'success',
-      message: 'hello, world!'
+      message: 'hello world from knyte.space!'
     };
   })
   
