@@ -19,19 +19,9 @@ router.get('/', async (ctx) => {
     };
 });
 router.get('/knytes', async (ctx) => {
-    try {
-        await pgClient.connect();
-        console.log('connected');
-    } catch(e) {
-        console.warn(e);
-    }
+    await pgClient.connect();
     const result = await pgClient.query('SELECT NOW()');
-    try {
-        await pgClient.end();
-        console.log('disconnected');
-    } catch(e) {
-        console.warn(e);
-    }
+    await pgClient.end();
     ctx.body = {result};
 });
 
