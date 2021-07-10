@@ -6,7 +6,12 @@ const connectionString = process.env.DATABASE_URL;
 const app = new Koa();
 const PORT = process.env.PORT || 3000;
 const router = new Router();
-const pgClient = new PG.Client(connectionString);
+const pgClient = new PG.Client({
+    connectionString,
+    ssl: {
+        rejectUnauthorized: false
+    }
+});
 
 router.get('/', async (ctx) => {
         ctx.body = {
