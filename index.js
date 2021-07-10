@@ -50,7 +50,7 @@ router.get('/knytes', async (ctx) => {
     }
     let result = {};
     try {
-        const queryString = 'SELECT * FROM knytes';
+        const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
         result = (await pgClient.query(queryString)).rows;
         console.log('query done: ' + queryString);
     } catch (e) {
