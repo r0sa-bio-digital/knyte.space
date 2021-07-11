@@ -5,8 +5,9 @@
             async function onLoad()
             {
                 const response = await fetch('https://knyte-space.herokuapp.com/');
-                document.getElementById('message').textContent = response.message;
-                document.getElementById('from').textContent = response.from;
+                const json = await response.json();
+                document.getElementById('message').textContent = json.message;
+                document.getElementById('from').textContent = json.from;
             }
         </script>
     </head>
