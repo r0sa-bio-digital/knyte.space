@@ -39,6 +39,9 @@
                 display: inline-block;
                 font-family: "meslo";
             }
+            button {
+                margin: 0.3em;
+            }
             .runBlockReady {
                 border: 2px solid black;
             }
@@ -52,35 +55,76 @@
             }
         </style>
         <script>
+            const knyteMap = {};
+            const originToLinkMap = {};
+            const terminationToLinkMap = {};
+
             function handleRunClick(e)
             {
-                const {knyteId, content} = e.target.dataset;
-                const knyteElement = document.getElementById('knoxel-' + knyteId);
-                // run knyte content as a peace of js code
-                try
+                function runBlock(knyteId)
                 {
-                    const knyteFunction = new Function(content);
-                    knyteFunction();
-                    knyteElement.className = 'runBlockReady';
+                    const {content} = knyteMap[knyteId];
+                    const knyteElement = document.getElementById('knoxel-' + knyteId);
+                    // run knyte content as a peace of js code
+                    try
+                    {
+                        const knyteFunction = new Function(content);
+                        knyteFunction();
+                        knyteElement.className = 'runBlockReady';
+                    }
+                    catch(e)
+                    {
+                        knyteElement.className = 'runBlockError';
+                        throw e;
+                    }
+                    // check outgoing links to run termination knytes
+                    const knyteIds = originToLinkMap[knyteId];
+                    if (knyteIds)
+                        for (var i = 0; i < knyteIds.length; ++i)
+                        {
+                            const terminationKnyte = knyteMap[knyteIds[i]];
+                            if (terminationKnyte)
+                            {
+                                const terminationId = terminationKnyte.termination_id;
+                                if (terminationId)
+                                    runBlock(terminationId);
+                            }
+                        }
                 }
-                catch(e)
-                {
-                    knyteElement.className = 'runBlockError';
-                    throw e;
-                }
+
+                const {knyteId} = e.target.dataset;
+                runBlock(knyteId);
             }
+
+            function handleIdClick(e)
+            {
+                const {knyteId} = e.target.dataset;
+                alert(knyteId);
+            }
+
             async function onLoad()
             {
                 const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                 const json = await response.json();
                 const knytes = json.result;
                 const knyteList = document.getElementById('knyteList');
-                // build knyte map
-                const knyteMap = {};
+                // build knyte maps
                 for (var i = 0; i < knytes.length; ++i)
                 {
                     const knyte = knytes[i];
                     knyteMap[knyte.knyte_id] = knyte;
+                    if (knyte.origin_id)
+                    {
+                        if (!originToLinkMap[knyte.origin_id])
+                            originToLinkMap[knyte.origin_id] = [];
+                        originToLinkMap[knyte.origin_id].push(knyte.knyte_id);
+                    }
+                    if (knyte.termination_id)
+                    {
+                        if (!terminationToLinkMap[knyte.termination_id])
+                            terminationToLinkMap[knyte.termination_id] = [];
+                        terminationToLinkMap[knyte.termination_id].push(knyte.knyte_id);
+                    }
                 }
                 // show knyte content
                 for (var i = 0; i < knytes.length; ++i)
@@ -90,6 +134,7 @@
                     const originElement = document.createElement('pre');
                     const contentElement = document.createElement('pre');
                     const terminationElement = document.createElement('pre');
+                    const idElement = document.createElement('button');
                     const runElement = document.createElement('button');
                     knyteElement.id = 'knoxel-' + knyte.knyte_id;
                     knyteElement.className = 'runBlockReady';
@@ -99,13 +144,16 @@
                     contentElement.className = 'content';
                     if (knyte.termination_id)
                         terminationElement.textContent = knyteMap[knyte.termination_id].content;
+                    idElement.textContent = 'id';
+                    idElement.dataset.knyteId = knyte.knyte_id;
+                    idElement.onclick = handleIdClick;
                     runElement.textContent = 'run';
                     runElement.dataset.knyteId = knyte.knyte_id;
-                    runElement.dataset.content = knyte.content;
                     runElement.onclick = handleRunClick;
                     knyteElement.appendChild(originElement);
                     knyteElement.appendChild(contentElement);
                     knyteElement.appendChild(terminationElement);
+                    knyteElement.appendChild(idElement);
                     knyteElement.appendChild(runElement);
                     knyteList.appendChild(knyteElement);
                 }
