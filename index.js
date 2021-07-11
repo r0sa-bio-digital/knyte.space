@@ -1,14 +1,14 @@
-const Koa = require('koa');
-const Router = require('koa-router');
-const PG = require('pg');
+const koa = require('koa');
+const router = require('koa-router');
+const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
-const app = new Koa();
-const PORT = process.env.PORT || 3000;
-const router = new Router();
+const app = new koa();
+const port = process.env.PORT || 3000;
+const router = new router();
 
 async function runQuery(queryString) {
-    const pgClient = new PG.Client({
+    const pgClient = new pg.Client({
         connectionString,
         ssl: {
             rejectUnauthorized: false
@@ -52,6 +52,6 @@ router.get('/knytes', async (ctx) => {
 
 app.use(router.routes());
 
-const server = app.listen(PORT, () => {
-    console.log(`Server listening on port: ${PORT}`);
+const server = app.listen(port, () => {
+    console.log(`Server listening on port: ${port}`);
 });
