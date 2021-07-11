@@ -1,5 +1,6 @@
 const koa = require('koa');
 const koaRouter = require('koa-router');
+const cors = require('@koa/cors');
 const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
@@ -49,6 +50,7 @@ router.get('/knytes', async (ctx) => {
     ctx.body = {result: await runQuery(queryString)};
 });
 
+app.use(cors());
 app.use(router.routes());
 
 const server = app.listen(port, () => {
