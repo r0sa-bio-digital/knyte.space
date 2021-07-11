@@ -37,10 +37,11 @@
             {
                 const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                 const json = await response.json();
+                const knytes = json.result;
                 const knyteList = document.getElementById('knyteList');
-                for (var i = 0; i < json.result.length; ++i)
+                for (var i = 0; i < knytes.length; ++i)
                 {
-                    const knyte = json[i];
+                    const knyte = knytes[i];
                     const knyteElement = document.createElement('div');
                     knyteElement.style.border = '2px solid black';
                     knyteElement.textContent = knyte.content;
