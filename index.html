@@ -44,17 +44,30 @@
                 const json = await response.json();
                 const knytes = json.result;
                 const knyteList = document.getElementById('knyteList');
+                // show knyte content
                 for (var i = 0; i < knytes.length; ++i)
                 {
-                    // get knyte
                     const knyte = knytes[i];
-                    // show knyte content
                     const knyteElement = document.createElement('pre');
+                    knyteElement.id = knyte.knyte_id;
                     knyteElement.textContent = knyte.content;
                     knyteList.appendChild(knyteElement);
-                    // run knyte content as a peace of js code
-                    const knyteFunction = new Function(knyte.content);
-                    knyteFunction();
+                }
+                // run knyte content as a peace of js code
+                for (var i = 0; i < knytes.length; ++i)
+                {
+                    const knyte = knytes[i];
+                    try
+                    {
+                        const knyteFunction = new Function(knyte.content);
+                        knyteFunction();
+                    }
+                    catch(e)
+                    {
+                        const knyteElement = document.getElementById(knyte.knyte_id);
+                        knyteElement.style.border = '2px solid red';
+                        throw e;
+                    }
                 }
             }
         </script>
