@@ -17,20 +17,17 @@ async function runQuery(queryString) {
     });    
     try {
         await client.connect();
-        console.log('connected');
     } catch(e) {
         console.warn(e);
     }
     let result = {};
     try {
         result = (await client.query(queryString)).rows;
-        console.log('query done: ' + queryString);
     } catch (e) {
         console.warn(e);
     }
     try {
         await client.end();
-        console.log('disconnected');
     } catch(e) {
         console.warn(e);
     }
@@ -39,7 +36,8 @@ async function runQuery(queryString) {
 
 router.get('/', async (ctx) => {
         ctx.body = {
-        message: 'hello world from knyte.space!'
+        message: 'Hello, world!',
+        from: 'knyte.space',
     };
 });
 router.get('/now', async (ctx) => {
