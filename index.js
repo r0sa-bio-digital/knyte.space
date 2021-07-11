@@ -1,14 +1,14 @@
 const koa = require('koa');
-const router = require('koa-router');
+const koaRouter = require('koa-router');
 const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 const app = new koa();
 const port = process.env.PORT || 3000;
-const router = new router();
+const router = new koaRouter();
 
 async function runQuery(queryString) {
-    const pgClient = new pg.Client({
+    const client = new pg.Client({
         connectionString,
         ssl: {
             require: true,
@@ -16,20 +16,20 @@ async function runQuery(queryString) {
         }
     });    
     try {
-        await pgClient.connect();
+        await client.connect();
         console.log('connected');
     } catch(e) {
         console.warn(e);
     }
     let result = {};
     try {
-        result = (await pgClient.query(queryString)).rows;
+        result = (await client.query(queryString)).rows;
         console.log('query done: ' + queryString);
     } catch (e) {
         console.warn(e);
     }
     try {
-        await pgClient.end();
+        await client.end();
         console.log('disconnected');
     } catch(e) {
         console.warn(e);
