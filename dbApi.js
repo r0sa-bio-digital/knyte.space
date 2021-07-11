@@ -1,6 +1,6 @@
 const koa = require('koa');
 const koaRouter = require('koa-router');
-const cors = require('@koa/cors');
+const cors = require('kcors');
 const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
