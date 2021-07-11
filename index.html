@@ -86,83 +86,17 @@
                         terminationToLinkMap[knyte.termination_id].push(knyte.knyte_id);
                     }
                 }
-                
-                // show knyte content
-                const handleRunClick = function(e)
+                // run bootloader block
+                const bootloaderKnyteId = '2ac04735-106f-4179-aa49-bdbe5e740d77';
+                const {content} = knyteMap[bootloaderKnyteId];
+                try
                 {
-                    function runBlock(knyteId)
-                    {
-                        const {content} = knyteMap[knyteId];
-                        const knyteElement = document.getElementById('knoxel-' + knyteId);
-                        // run knyte content as a peace of js code
-                        try
-                        {
-                            const knyteFunction = new Function(content);
-                            knyteFunction();
-                            knyteElement.className = 'runBlockReady';
-                        }
-                        catch(e)
-                        {
-                            knyteElement.className = 'runBlockError';
-                            throw e;
-                        }
-                        // check outgoing links to run termination knytes
-                        const knyteIds = originToLinkMap[knyteId];
-                        if (knyteIds)
-                            for (var i = 0; i < knyteIds.length; ++i)
-                            {
-                                const terminationKnyte = knyteMap[knyteIds[i]];
-                                if (terminationKnyte)
-                                {
-                                    const terminationId = terminationKnyte.termination_id;
-                                    if (terminationId)
-                                        runBlock(terminationId);
-                                }
-                            }
-                    }
-
-                    const {knyteId} = e.target.dataset;
-                    runBlock(knyteId);
+                    const bootloaderFunction = new Function(content);
+                    bootloaderFunction();
                 }
-
-                const handleIdClick = function(e)
+                catch(e)
                 {
-                    const {knyteId} = e.target.dataset;
-                    alert(knyteId);
-                }
-
-                const knyteList = document.createElement('div');
-                knyteList.id = 'knyteList';
-                for (var i = 0; i < knytes.length; ++i)
-                {
-                    const knyte = knytes[i];
-                    const knyteElement = document.createElement('div');
-                    const originElement = document.createElement('pre');
-                    const contentElement = document.createElement('pre');
-                    const terminationElement = document.createElement('pre');
-                    const idElement = document.createElement('button');
-                    const runElement = document.createElement('button');
-                    knyteElement.id = 'knoxel-' + knyte.knyte_id;
-                    knyteElement.className = 'runBlockReady';
-                    if (knyte.origin_id)
-                        originElement.textContent = knyteMap[knyte.origin_id].content;
-                    contentElement.textContent = knyte.content;
-                    contentElement.className = 'content';
-                    if (knyte.termination_id)
-                        terminationElement.textContent = knyteMap[knyte.termination_id].content;
-                    idElement.textContent = 'id';
-                    idElement.dataset.knyteId = knyte.knyte_id;
-                    idElement.onclick = handleIdClick;
-                    runElement.textContent = 'run';
-                    runElement.dataset.knyteId = knyte.knyte_id;
-                    runElement.onclick = handleRunClick;
-                    knyteElement.appendChild(originElement);
-                    knyteElement.appendChild(contentElement);
-                    knyteElement.appendChild(terminationElement);
-                    knyteElement.appendChild(idElement);
-                    knyteElement.appendChild(runElement);
-                    knyteList.appendChild(knyteElement);
-                    viewportElement.appendChild(knyteList);
+                    throw e;
                 }
             }
         </script>
