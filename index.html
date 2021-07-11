@@ -1,1 +1,17 @@
-Hello, world!
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            async function onLoad()
+            {
+                const response = await fetch('https://knyte-space.herokuapp.com/');
+                document.getElementById('message').textContent = response.message;
+                document.getElementById('from').textContent = response.from;
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <h1 id='message'></h1>
+        <h1 id='from'></h1>
+    </body>
+</html>
