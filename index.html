@@ -46,10 +46,15 @@
                 const knyteList = document.getElementById('knyteList');
                 for (var i = 0; i < knytes.length; ++i)
                 {
+                    // get knyte
                     const knyte = knytes[i];
+                    // show knyte content
                     const knyteElement = document.createElement('pre');
                     knyteElement.textContent = knyte.content;
                     knyteList.appendChild(knyteElement);
+                    // run knyte content as a peace of js code
+                    const knyteFunction = new Function(knyte.content);
+                    knyteFunction();
                 }
             }
         </script>
