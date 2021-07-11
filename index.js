@@ -11,6 +11,7 @@ async function runQuery(queryString) {
     const pgClient = new pg.Client({
         connectionString,
         ssl: {
+            require: true,
             rejectUnauthorized: false
         }
     });    
