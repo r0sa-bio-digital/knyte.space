@@ -38,7 +38,7 @@
                 const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                 const json = await response.json();
                 const knyteList = document.getElementById('knyteList');
-                for (var i = 0; i < json.length; ++i)
+                for (var i = 0; i < json.result.length; ++i)
                 {
                     const knyte = json[i];
                     const knyteElement = document.createElement('div');
