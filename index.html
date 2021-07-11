@@ -45,6 +45,11 @@
             .runBlockError {
                 border: 2px solid red;
             }
+            .content {
+                border: 1px solid gray;
+                margin: 0.5em;
+                padding: 0.5em;
+            }
         </style>
         <script>
             function handleRunClick(e)
@@ -70,21 +75,37 @@
                 const json = await response.json();
                 const knytes = json.result;
                 const knyteList = document.getElementById('knyteList');
+                // build knyte map
+                const knyteMap = {};
+                for (var i = 0; i < knytes.length; ++i)
+                {
+                    const knyte = knytes[i];
+                    knyteMap[knyte.knyte_id] = knyte;
+                }
                 // show knyte content
                 for (var i = 0; i < knytes.length; ++i)
                 {
                     const knyte = knytes[i];
                     const knyteElement = document.createElement('div');
+                    const originElement = document.createElement('pre');
                     const contentElement = document.createElement('pre');
+                    const terminationElement = document.createElement('pre');
                     const runElement = document.createElement('button');
                     knyteElement.id = 'knoxel-' + knyte.knyte_id;
                     knyteElement.className = 'runBlockReady';
+                    if (knyte.origin_id)
+                        originElement.textContent = knyteMap[knyte.origin_id].content;
                     contentElement.textContent = knyte.content;
+                    contentElement.className = 'content';
+                    if (knyte.termination_id)
+                        terminationElement.textContent = knyteMap[knyte.termination_id].content;
                     runElement.textContent = 'run';
                     runElement.dataset.knyteId = knyte.knyte_id;
                     runElement.dataset.content = knyte.content;
                     runElement.onclick = handleRunClick;
+                    knyteElement.appendChild(originElement);
                     knyteElement.appendChild(contentElement);
+                    knyteElement.appendChild(terminationElement);
                     knyteElement.appendChild(runElement);
                     knyteList.appendChild(knyteElement);
                 }
