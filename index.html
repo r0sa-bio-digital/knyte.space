@@ -31,8 +31,10 @@
                 font-family: meslo;
                 margin: 2em;
             }
-            div {
+            pre {
+                border: 2px solid black;
                 margin: 0.5em;
+                padding: 0.5em;
             }
         </style>
         <script>
@@ -45,8 +47,7 @@
                 for (var i = 0; i < knytes.length; ++i)
                 {
                     const knyte = knytes[i];
-                    const knyteElement = document.createElement('div');
-                    knyteElement.style.border = '2px solid black';
+                    const knyteElement = document.createElement('pre');
                     knyteElement.textContent = knyte.content;
                     knyteList.appendChild(knyteElement);
                 }
