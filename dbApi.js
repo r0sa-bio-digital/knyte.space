@@ -71,18 +71,17 @@ app.use(cors());
 app.use(require('koa-static')('.'));
 app.use(router.routes());
 listenDb();
-
+/*
 const server = app.listen(port, () => {
     console.log(`Koa server listening on port ${port}`);
 });
-
+*/
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
         io.emit('chat message', msg);
     });
 });
-/*  
+  
 http.listen(port, () => {
     console.log(`Socket.IO server running at port ${port}`);
 });
-*/
