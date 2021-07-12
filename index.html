@@ -28,6 +28,7 @@
             }
         </style>
         <script>
+            let connection;
             const knyteSpaceApi = {
                 knyteMap: {},
                 originToLinkMap: {},
@@ -74,7 +75,7 @@
                 // web socket connection
                 const portRequest = await fetch('https://knyte-space.herokuapp.com/port');
                 const {port} = await portRequest.json();
-                var connection = new WebSocket('wss://knyte-space.herokuapp.com:' + port);
+                connection = new WebSocket('wss://knyte-space.herokuapp.com:' + port);
 
                 connection.onopen = function () {
                     console.log('ws open');
@@ -83,7 +84,7 @@
                 connection.onerror = function (error) {
                     console.warn('ws error');
                 };
-        }
+            }
         </script>
     </head>
     <body onload="onLoad()">
