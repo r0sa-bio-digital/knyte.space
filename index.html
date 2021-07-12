@@ -61,6 +61,9 @@
             const knyteMap = {};
             const originToLinkMap = {};
             const terminationToLinkMap = {};
+            const knyteSpaceApi = {
+                bootloaderKnyteId: '2ac04735-106f-4179-aa49-bdbe5e740d77',
+            };
 
             async function onLoad()
             {
@@ -87,8 +90,7 @@
                     }
                 }
                 // run bootloader block
-                const bootloaderKnyteId = '2ac04735-106f-4179-aa49-bdbe5e740d77';
-                const {content} = knyteMap[bootloaderKnyteId];
+                const {content} = knyteMap[knyteSpaceApi.bootloaderKnyteId];
                 try
                 {
                     const bootloaderFunction = new Function(content);
