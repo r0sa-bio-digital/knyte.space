@@ -81,7 +81,8 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 });
-  
+/*  
 http.listen(port, () => {
     console.log(`Socket.IO server running at port ${port}`);
 });
+*/
