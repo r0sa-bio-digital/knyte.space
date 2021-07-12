@@ -62,12 +62,8 @@ app.get('/knytes', async (req, res) => {
 const public = ['/index.html', '/chat.html', 'favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
 app.get('/*', (req, res) => {
-    console.log(req.path);
-    const resourceId = req.path.toLowerCase();
-    if (public.includes(resourceId))
-        res.sendFile(__dirname + resourceId);
-    else if (resourceId === '/')
-        res.sendFile(__dirname + '/index.html');
+    const resourceId = req.path === '/' ? '/index.html' : req.path;
+    public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
 });
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
