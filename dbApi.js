@@ -1,4 +1,4 @@
-const koa = require('koa');
+const koa = require('koa'); // TODO: shift from koa to express to simplify things
 const koaRouter = require('koa-router');
 const cors = require('kcors');
 const pg = require('pg');
