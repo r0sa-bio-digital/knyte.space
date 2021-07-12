@@ -81,6 +81,10 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 });
+
+appExpress.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
   
 http.listen(port, () => {
     console.log(`Socket.IO server running at port ${port}`);
