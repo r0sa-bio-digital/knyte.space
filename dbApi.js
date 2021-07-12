@@ -5,8 +5,7 @@ const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 const app = new koa();
-const portIO = process.env.PORT || 3000;
-const port = parseInt(portIO) + 1;
+const port = process.env.PORT || 3000;
 const router = new koaRouter();
 
 const appExpress = require('express')();
@@ -83,6 +82,6 @@ io.on('connection', (socket) => {
     });
 });
   
-http.listen(portIO, () => {
-    console.log(`Socket.IO server running at port ${portIO}`);
+http.listen(port, () => {
+    console.log(`Socket.IO server running at port ${port}`);
 });
