@@ -54,13 +54,14 @@ async function runQuery(queryString) {
     }
     return result;
 }
-
+/*
 router.get('/', async (ctx) => {
         ctx.body = {
         message: 'Hello, world!',
         from: 'knyte.space',
     };
 });
+*/
 router.get('/now', async (ctx) => {
     const queryString = 'SELECT NOW()';
     ctx.body = {result: await runQuery(queryString)};
@@ -71,6 +72,7 @@ router.get('/knytes', async (ctx) => {
 });
 
 app.use(cors());
+app.use(require('koa-static'));
 app.use(router.routes());
 listenDb();
 
