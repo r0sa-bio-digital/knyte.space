@@ -59,7 +59,7 @@ app.get('/knytes', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-const public = ['/index.html', '/chat.html', 'favicon.ico', '/font/MesloLGM-Bold.ttf',
+const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
 app.get('/*', (req, res) => {
     const resourceId = req.path === '/' ? '/index.html' : req.path;
