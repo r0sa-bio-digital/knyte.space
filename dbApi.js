@@ -6,6 +6,7 @@ const connectionString = process.env.DATABASE_URL;
 
 const app = new koa();
 const port = process.env.PORT || 3000;
+const portIO = parseInt(port) + 1;
 const router = new koaRouter();
 
 const appExpress = require('express')();
@@ -82,6 +83,6 @@ io.on('connection', (socket) => {
     });
 });
   
-http.listen(port+1, () => {
-    console.log(`Socket.IO server running at port ${port+1}`);
+http.listen(portIO, () => {
+    console.log(`Socket.IO server running at port ${portIO}`);
 });
