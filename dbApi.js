@@ -1,4 +1,5 @@
 const koa = require('koa');
+const http = require('http');
 const koaRouter = require('koa-router');
 const cors = require('kcors');
 const pg = require('pg');
@@ -78,17 +79,19 @@ app.use(cors());
 app.use(router.routes());
 listenDb();
 
-const server = app.listen(port, () => {
+const server = http.createServer(app.callback());
+server.listen(port, () => {
     console.log(`Server listening on port: ${port}`);
 });
 
 const wss = new webSocketServer({
+    port,
     httpServer: server, 
     autoAcceptConnections: false // for development only
 });
 wss.on('request', function(request) {
     console.log(request);
-    var connection = request.accept(null, request.origin);
+    const connection = request.accept(null, request.origin);
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' - connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
