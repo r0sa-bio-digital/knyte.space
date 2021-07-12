@@ -65,6 +65,9 @@ appExpress.get('/chat', (req, res) => {
 appExpress.get('/list', (req, res) => {
     res.sendFile(__dirname + '/list.html');
 });
+appExpress.get('/favicon.ico', (req, res) => {
+    res.sendFile(__dirname + '/favicon.ico');
+});
 appExpress.get('/font/MesloLGM-Regular.ttf', (req, res) => {
     res.sendFile(__dirname + '/font/MesloLGM-Regular.ttf');
 });
