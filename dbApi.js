@@ -87,8 +87,7 @@ const wss = new webSocketServer({
     autoAcceptConnections: false // for development only
 });
 wss.on('request', function(request) {
-    console.log(request);
-    var connection = request.accept(null, request.origin);
+    var connection = request.accept('echo-protocol', request.origin);
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' - connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
