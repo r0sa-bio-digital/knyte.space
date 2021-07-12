@@ -53,6 +53,26 @@ router.get('/knytes', async (ctx) => {
 app.use(cors());
 app.use(router.routes());
 
+{
+    const client = new pg.Client({
+        connectionString,
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    });    
+    try {
+        await client.connect();
+    } catch(e) {
+        console.warn(e);
+    }
+    client.on('notification', function(msg) {
+        console.log('watch_knytes_table event:');
+        console.log(msg);
+    });
+    const query = client.query('LISTEN watch_knytes_table');    
+}
+
 const server = app.listen(port, () => {
     console.log(`Server listening on port: ${port}`);
 });
