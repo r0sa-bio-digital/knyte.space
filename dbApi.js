@@ -4,7 +4,6 @@ const cors = require('kcors');
 const pg = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
-let messagingEnabled = false;
 const app = new koa();
 const port = process.env.PORT || 3000;
 const router = new koaRouter();
@@ -77,9 +76,4 @@ listenDb();
 
 const server = app.listen(port, () => {
     console.log(`Server listening on port: ${port}`);
-});
-
-const io = require('socket.io')(server);
-io.on('connection', (socket) => {
-    console.log('a user connected');
 });
