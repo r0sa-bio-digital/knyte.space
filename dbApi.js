@@ -1,16 +1,9 @@
-const koa = require('koa'); // TODO: shift from koa to express to simplify things
-const koaRouter = require('koa-router');
-const cors = require('kcors');
-const pg = require('pg');
-const connectionString = process.env.DATABASE_URL;
-
-const app = new koa();
-const port = process.env.PORT || 3000;
-const router = new koaRouter();
-
 const appExpress = require('express')();
 const http = require('http').Server(appExpress);
+const pg = require('pg');
 const io = require('socket.io')(http);
+const connectionString = process.env.DATABASE_URL;
+const port = process.env.PORT || 3000;
 
 async function listenDb() {
     const client = new pg.Client({
@@ -31,7 +24,6 @@ async function listenDb() {
     });
     const query = client.query('LISTEN watch_knytes_table');    
 }
-
 async function runQuery(queryString) {
     const client = new pg.Client({
         connectionString,
@@ -58,34 +50,28 @@ async function runQuery(queryString) {
     }
     return result;
 }
-router.get('/now', async (ctx) => {
-    const queryString = 'SELECT NOW()';
-    ctx.body = {result: await runQuery(queryString)};
-});
-router.get('/knytes', async (ctx) => {
-    const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
-    ctx.body = {result: await runQuery(queryString)};
-});
 
-app.use(cors());
-app.use(require('koa-static')('.'));
-app.use(router.routes());
-listenDb();
-/*
-const server = app.listen(port, () => {
-    console.log(`Koa server listening on port ${port}`);
+appExpress.get('/now', async (req, res) => {
+    const queryString = 'SELECT NOW()';
+    res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-*/
+appExpress.get('/knytes', async (req, res) => {
+    const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
+    res.send(JSON.stringify({result: await runQuery(queryString)}));
+});
+appExpress.get('/chat', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+appExpress.get('/list', (req, res) => {
+    res.sendFile(__dirname + '/list.html');
+});
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
         io.emit('chat message', msg);
     });
 });
 
-appExpress.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
-  
+listenDb();
 http.listen(port, () => {
     console.log(`Socket.IO server running at port ${port}`);
 });
