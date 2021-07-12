@@ -8,6 +8,10 @@ const app = new koa();
 const port = process.env.PORT || 3000;
 const router = new koaRouter();
 
+const appExpress = require('express')();
+const http = require('http').Server(appExpress);
+const io = require('socket.io')(http);
+
 async function listenDb() {
     const client = new pg.Client({
         connectionString,
@@ -69,5 +73,15 @@ app.use(router.routes());
 listenDb();
 
 const server = app.listen(port, () => {
-    console.log(`Server listening on port: ${port}`);
+    console.log(`Koa server listening on port ${port}`);
+});
+
+io.on('connection', (socket) => {
+    socket.on('chat message', msg => {
+        io.emit('chat message', msg);
+    });
+});
+  
+http.listen(port+1, () => {
+    console.log(`Socket.IO server running at port ${port+1}`);
 });
