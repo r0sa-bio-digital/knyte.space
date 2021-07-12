@@ -28,17 +28,17 @@
             }
         </style>
         <script>
-            let viewportElement;
             const knyteSpaceApi = {
                 knyteMap: {},
                 originToLinkMap: {},
                 terminationToLinkMap: {},
                 bootloaderKnyteId: '2ac04735-106f-4179-aa49-bdbe5e740d77',
+                viewportElement: undefined,
             };
 
             async function onLoad()
             {
-                viewportElement = document.getElementById('viewport');
+                knyteSpaceApi.viewportElement = document.getElementById('viewport');
                 const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                 const json = await response.json();
                 const knytes = json.result;
