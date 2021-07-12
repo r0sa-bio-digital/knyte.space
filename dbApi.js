@@ -1,5 +1,5 @@
-const appExpress = require('express')();
-const http = require('http').Server(appExpress);
+const app = require('express')();
+const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
 const connectionString = process.env.DATABASE_URL;
@@ -51,25 +51,23 @@ async function runQuery(queryString) {
     return result;
 }
 
-appExpress.get('/now', async (req, res) => {
+app.get('/now', async (req, res) => {
     const queryString = 'SELECT NOW()';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-appExpress.get('/knytes', async (req, res) => {
+app.get('/knytes', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-appExpress.get('/chat', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
-appExpress.get('/list', (req, res) => {
-    res.sendFile(__dirname + '/list.html');
-});
-appExpress.get('/favicon.ico', (req, res) => {
-    res.sendFile(__dirname + '/favicon.ico');
-});
-appExpress.get('/font/MesloLGM-Regular.ttf', (req, res) => {
-    res.sendFile(__dirname + '/font/MesloLGM-Regular.ttf');
+const public = ['/index.html', '/chat.html', 'favicon.ico', '/font/MesloLGM-Bold.ttf',
+    '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
+app.get('/*', (req, res) => {
+    console.log(req.path);
+    const resourceId = req.path.toLowerCase();
+    if (public.includes(resourceId))
+        res.sendFile(__dirname + resourceId);
+    else if (resourceId === '/')
+        res.sendFile(__dirname + '/index.html');
 });
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
