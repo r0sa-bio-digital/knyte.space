@@ -6,7 +6,7 @@ const connectionString = process.env.DATABASE_URL;
 
 const app = new koa();
 const portIO = process.env.PORT || 3000;
-const port = parseInt(port) + 1;
+const port = parseInt(portIO) + 1;
 const router = new koaRouter();
 
 const appExpress = require('express')();
