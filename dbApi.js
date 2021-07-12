@@ -72,7 +72,7 @@ router.get('/knytes', async (ctx) => {
 });
 
 app.use(cors());
-app.use(require('koa-static'));
+app.use(require('koa-static')('.'));
 app.use(router.routes());
 listenDb();
 
