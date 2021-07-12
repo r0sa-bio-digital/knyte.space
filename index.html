@@ -74,7 +74,7 @@
                 // web socket connection
                 const portRequest = await fetch('https://knyte-space.herokuapp.com/port');
                 const {port} = await portRequest.json();
-                var connection = new WebSocket('ws://knyte-space.herokuapp.com:' + port);
+                var connection = new WebSocket('wss://knyte-space.herokuapp.com:' + port);
 
                 connection.onopen = function () {
                     console.log('ws open');
