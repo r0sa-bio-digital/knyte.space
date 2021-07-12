@@ -65,6 +65,9 @@ appExpress.get('/chat', (req, res) => {
 appExpress.get('/list', (req, res) => {
     res.sendFile(__dirname + '/list.html');
 });
+appExpress.get('/font/MesloLGM-Regular.ttf', (req, res) => {
+    res.sendFile(__dirname + '/font/MesloLGM-Regular.ttf');
+});
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
         io.emit('chat message', msg);
