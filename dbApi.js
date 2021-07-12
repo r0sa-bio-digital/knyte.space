@@ -86,7 +86,7 @@ const wss = new webSocketServer({
     httpServer: server, 
     autoAcceptConnections: false // for development only
 });
-wss.on('request', function(request) {
+wsServer.on('request', function(request) {
     var connection = request.accept('echo-protocol', request.origin);
     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' - connection accepted.');
     connection.on('message', function(message) {
