@@ -75,8 +75,8 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 });
-socket.on("connect", () => {
-    ioClient.log('>>> bot connected: ' + ioClient.id);
+ioClient.on("connect", () => {
+    console.log('>>> bot connected: ' + ioClient.id);
 });
 
 listenDb();
