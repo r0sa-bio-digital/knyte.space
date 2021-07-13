@@ -60,8 +60,8 @@ app.get('/knytes', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-app.get('/message', (req, res) => {
-    ioClient.connect();
+app.get('/message', async (req, res) => {
+    await ioClient.connect();
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
 });
