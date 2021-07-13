@@ -61,8 +61,8 @@ app.get('/knytes', async (req, res) => {
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/message', (req, res) => {
-    ioClient.emit('chat message', 'I am @ B0T 🤖');
-    res.send(JSON.stringify({result:'success'}));
+    const result = ioClient.emit('chat message', 'I am @ B0T 🤖');
+    res.send(JSON.stringify({result}));
 });
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
