@@ -2,6 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
+const ioClient = require("socket.io-client")();
 const connectionString = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
@@ -58,6 +59,10 @@ app.get('/now', async (req, res) => {
 app.get('/knytes', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id"';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
+});
+app.get('/message', (req, res) => {
+    ioClient.emit('chat message', 'I am @ B0T 🤖');
+    res.send(JSON.stringify({result:'success'}));
 });
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
