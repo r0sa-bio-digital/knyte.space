@@ -19,7 +19,7 @@ async function listenDb() {
     } catch(e) {
         console.warn(e);
     }
-    client.on('notification', function(msg) {
+    client.on('notification', async function(msg) {
         console.log('watch_knytes_table event:');
         console.log(msg);
         await ioClient.connect();
