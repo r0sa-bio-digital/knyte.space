@@ -20,10 +20,8 @@ async function listenDb() {
         console.warn(e);
     }
     client.on('notification', async function(msg) {
-        console.log('watch_knytes_table event:');
-        console.log(msg);
         await ioClient.connect();
-        ioClient.emit('chat message', msg);
+        ioClient.emit('chat message', JSON.stringify(msg));
     });
     const query = client.query('LISTEN watch_knytes_table');    
 }
