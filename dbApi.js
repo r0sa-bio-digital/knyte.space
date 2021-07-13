@@ -22,6 +22,8 @@ async function listenDb() {
     client.on('notification', function(msg) {
         console.log('watch_knytes_table event:');
         console.log(msg);
+        await ioClient.connect();
+        ioClient.emit('chat message', msg);
     });
     const query = client.query('LISTEN watch_knytes_table');    
 }
@@ -78,6 +80,9 @@ io.on('connection', (socket) => {
 });
 ioClient.on("connect", () => {
     console.log('>>> bot connected: ' + ioClient.id);
+});
+ioClient.on("disconnect", () => {
+    console.log('>>> bot disconnected: ' + ioClient.id);
 });
 
 listenDb();
