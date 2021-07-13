@@ -2,7 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
-const ioClient = require("socket.io-client")();
+const ioClient = require("socket.io-client")('https://knyte-space.herokuapp.com/');
 const connectionString = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
