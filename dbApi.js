@@ -3,7 +3,6 @@ const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
 const ioClient = require("socket.io-client")();
-ioClient.connect();
 const connectionString = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 
@@ -62,6 +61,7 @@ app.get('/knytes', async (req, res) => {
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/message', (req, res) => {
+    ioClient.connect();
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
 });
