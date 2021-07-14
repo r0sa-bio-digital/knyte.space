@@ -8,6 +8,7 @@ knyte.space is a web operational system implementing fileless conception of sema
 Entire project made to be hosted in a single Heroku app.
 ### db
 Installed add-on Heroku Postgres to the target app.
+Initialisation of the db will be described later...
 ### backend
 Set up deploy from this GitHub repo or its fork.
 ### frontend
