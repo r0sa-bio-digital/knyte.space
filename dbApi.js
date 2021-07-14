@@ -61,6 +61,8 @@ app.get('/knytes', async (req, res) => {
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/knyte/:knyteId', async (req, res) => {
+    console.log(req.params);
+    console.log(req.params.knyteId);
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + req.params.knyteId + '\'';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
