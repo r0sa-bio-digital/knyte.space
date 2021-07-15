@@ -1,6 +1,7 @@
 // common instances
 const uuid = require('uuid').v4;
 const app = require('express')();
+const bodyParser = require('body-parser')
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
@@ -8,6 +9,7 @@ const ioClient = require("socket.io-client")('https://knyte-space.herokuapp.com/
 const connectionString = process.env.DATABASE_URL;
 const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
+app.use(bodyParser.json());
 // common functions
 async function listenDb() {
     const client = new pg.Client({
@@ -99,6 +101,12 @@ app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => 
     const terminationId = req.params.terminationId.split('=')[1];
     const terminationIdValue = terminationId !== 'null' ? "'" + terminationId + "'" : 'NULL';
     const queryString = 'UPDATE "public"."knytes" SET "termination_id" = ' + terminationIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
+    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
+});
+app.post('/updateknyte/:knyteId/content', async (req, res) => {
+    const knyteId = req.params.knyteId.split('=')[1];
+    const contentValue = req.body.content ? "'" + req.body.content + "'" : 'NULL';
+    const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
 // serve statics
