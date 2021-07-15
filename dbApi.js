@@ -94,6 +94,13 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     const queryString = 'UPDATE "public"."knytes" SET "origin_id" = ' + originIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
+app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => {
+    const knyteId = req.params.knyteId.split('=')[1];
+    const terminationId = req.params.terminationId.split('=')[1];
+    const terminationIdValue = terminationId !== 'null' ? "'" + terminationId + "'" : 'NULL';
+    const queryString = 'UPDATE "public"."knytes" SET "termination_id" = ' + terminationIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
+    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
+});
 // serve statics
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
