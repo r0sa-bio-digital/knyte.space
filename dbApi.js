@@ -1,4 +1,5 @@
 // common instances
+const uuid = require('uuid').v4;
 const app = require('express')();
 const http = require('http').Server(app);
 const pg = require('pg');
@@ -55,7 +56,7 @@ async function runQuery(queryString) {
 }
 // test kit
 app.get('/ping', async (req, res) => {
-    res.send(JSON.stringify({result: 'pong'}));
+    res.send(JSON.stringify({result: 'pong ' + uuid()}));
 });
 app.get('/now', async (req, res) => {
     const queryString = 'SELECT NOW()';
