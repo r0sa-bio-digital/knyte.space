@@ -105,7 +105,7 @@ app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => 
 });
 app.post('/updateknyte/:knyteId/content', async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
-    const contentValue = req.body.content ? "'" + req.body.content + "'" : 'NULL';
+    const contentValue = req.body.content ? "'" + req.body.content.replaceAll("'", "''") + "'" : 'NULL'; // replaceAll for pg value string encoding
     const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
