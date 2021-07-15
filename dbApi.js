@@ -82,6 +82,11 @@ app.get('/newknyte', async (req, res) => {
     const queryString = 'INSERT INTO "public"."knytes" ("knyte_id") VALUES (\'' + knyteId + '\');';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
+app.get('/deleteknyte/:knyteId', async (req, res) => {
+    const knyteId = req.params.knyteId.split('=')[1];
+    const queryString = 'DELETE FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
+    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
+});
 // serve statics
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
