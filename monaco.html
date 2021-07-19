@@ -48,7 +48,8 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.js"></script>
 
 		<script>
-            const editorsCount = 100;
+            const editorsCount = 10;
+            const layoutToEditor = {};
             const containerElement = document.getElementById('container');
             function create()
             {
@@ -56,18 +57,51 @@
                 {
                     const editorElement = document.createElement('div');
                     editorElement.id = 'editor' + i;
-                    editorElement.style = 'width: 800px; height: 600px; border: 1px solid grey;';
+                    editorElement.style = 'width: 300px; height: 150px; border: 1px solid grey; display: inline-block;';
                     containerElement.appendChild(editorElement);
-                    monaco.editor.create(editorElement, {
+                    const editor = monaco.editor.create(editorElement, {
                         value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
                         language: 'javascript',
-                        wordWrap: 'on',
+                        wordWrap: 'off',
                         wordWrapMinified: true,
                         wrappingIndent: 'same',
                         fontFamily: 'meslo',
                         fontSize: 16,
                         minimap: {enabled: false},
+                        scrollBeyondLastLine: false,
+                        scrollBeyondLastColumn: false,
+                        renderWhitespace: 'none',
+                        disableMonospaceOptimizations: false,
                     });
+                    const layoutElement = document.createElement('button');
+                    layoutElement.id = 'layout' + i;
+                    layoutElement.textContent = 'layout';
+                    layoutElement.onclick = (e) => {
+                        const editor = layoutToEditor[e.target.id];
+                        const container = editor.getContainerDomNode();
+                        const width = editor.getContentWidth();
+                        const height = editor.getContentHeight();
+                        container.style.width = width + 80 + 'px';
+                        container.style.height = height + 'px';
+                        editor.layout();
+                    };
+                    layoutToEditor[layoutElement.id] = editor;
+                    containerElement.appendChild(layoutElement);
+                    containerElement.appendChild(document.createElement('br'));
+                    function updateSize(e)
+                    {
+                        console.log(editor.getContainerDomNode().id);
+                        console.log(e);
+                        const container = editor.getContainerDomNode();
+                        const width = editor.getContentWidth();
+                        const height = editor.getContentHeight();
+                        console.log({width, height});
+                        container.style.width = width + 80 + 'px';
+                        container.style.height = height + 'px';
+                        editor.layout();
+                    }
+                    editor.onDidContentSizeChange((e) => updateSize(e));
+                    editor.layout();
                 }
                 alert(editorsCount + ' monaco editor instances create');
             }
