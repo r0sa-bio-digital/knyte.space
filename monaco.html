@@ -49,7 +49,6 @@
 
 		<script>
             const editorsCount = 10;
-            const layoutToEditor = {};
             const containerElement = document.getElementById('container');
             function create()
             {
@@ -78,10 +77,8 @@
                         },
                     });
                     const layoutElement = document.createElement('button');
-                    layoutElement.id = 'layout' + i;
-                    layoutElement.textContent = 'layout';
+                    layoutElement.textContent = 'layout ' + i;
                     layoutElement.onclick = (e) => {
-                        const editor = layoutToEditor[e.target.id];
                         const container = editor.getContainerDomNode();
                         const width = editor.getContentWidth();
                         const height = editor.getContentHeight();
@@ -89,7 +86,6 @@
                         container.style.height = height + 'px';
                         editor.layout();
                     };
-                    layoutToEditor[layoutElement.id] = editor;
                     containerElement.appendChild(layoutElement);
                     containerElement.appendChild(document.createElement('br'));
                     function updateSize(e)
