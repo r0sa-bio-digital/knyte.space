@@ -48,15 +48,19 @@
         
         <script>
             const knyteSpaceApi = {
-                knyteMap: {},
-                originToLinkMap: {},
-                terminationToLinkMap: {},
                 bootloaderKnyteId: '2ac04735-106f-4179-aa49-bdbe5e740d77',
                 viewportElement: undefined,
+                initialKnytes: undefined,
             };
 
             async function onLoad()
             {
+                // init core api
+                knyteSpaceApi.viewportElement = document.getElementById('viewport');
+                const response = await fetch('https://knyte-space.herokuapp.com/knytes');
+                const json = await response.json();
+                knyteSpaceApi.initialKnytes = json.result;
+
                 // get bootloader knyte
                 const response = await fetch('https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId);
                 const json = await response.json();
@@ -72,42 +76,6 @@
                 {
                     throw e;
                 }
-
-                /*
-                knyteSpaceApi.viewportElement = document.getElementById('viewport');
-                const response = await fetch('https://knyte-space.herokuapp.com/knytes');
-                const json = await response.json();
-                const knytes = json.result;
-                // build knyte maps
-                for (var i = 0; i < knytes.length; ++i)
-                {
-                    const knyte = knytes[i];
-                    knyteSpaceApi.knyteMap[knyte.knyte_id] = knyte;
-                    if (knyte.origin_id)
-                    {
-                        if (!knyteSpaceApi.originToLinkMap[knyte.origin_id])
-                            knyteSpaceApi.originToLinkMap[knyte.origin_id] = [];
-                        knyteSpaceApi.originToLinkMap[knyte.origin_id].push(knyte.knyte_id);
-                    }
-                    if (knyte.termination_id)
-                    {
-                        if (!knyteSpaceApi.terminationToLinkMap[knyte.termination_id])
-                            knyteSpaceApi.terminationToLinkMap[knyte.termination_id] = [];
-                        knyteSpaceApi.terminationToLinkMap[knyte.termination_id].push(knyte.knyte_id);
-                    }
-                }
-                // run bootloader block
-                const {content} = knyteSpaceApi.knyteMap[knyteSpaceApi.bootloaderKnyteId];
-                try
-                {
-                    const bootloaderFunction = new Function(content);
-                    bootloaderFunction();
-                }
-                catch(e)
-                {
-                    throw e;
-                }
-                */
             }
         </script>
     </head>
