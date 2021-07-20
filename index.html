@@ -56,10 +56,12 @@
             async function onLoad()
             {
                 // init core api
-                knyteSpaceApi.viewportElement = document.getElementById('viewport');
-                const response = await fetch('https://knyte-space.herokuapp.com/knytes');
-                const json = await response.json();
-                knyteSpaceApi.initialKnytes = json.result;
+                {
+                    knyteSpaceApi.viewportElement = document.getElementById('viewport');
+                    const response = await fetch('https://knyte-space.herokuapp.com/knytes');
+                    const json = await response.json();
+                    knyteSpaceApi.initialKnytes = json.result;
+                }
 
                 // get bootloader knyte
                 const response = await fetch('https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId);
