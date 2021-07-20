@@ -1,50 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <style>
-            @font-face {
-                font-family: "meslo";
-                src: url("font/MesloLGM-Italic.ttf") format("truetype");
-                font-weight: normal;
-                font-style: italic;
-            }
-            @font-face {
-                font-family: "meslo";
-                src: url("font/MesloLGM-Regular.ttf") format("truetype");
-                font-weight: normal;
-                font-style: normal;
-            }
-            @font-face {
-                font-family: "meslo";
-                src: url("font/MesloLGM-Bold.ttf") format("truetype");
-                font-weight: bold;
-                font-style: normal;
-            }
-            @font-face {
-                font-family: "meslo";
-                src: url("font/MesloLGM-BoldItalic.ttf") format("truetype");
-                font-weight: bold;
-                font-style: italic;
-            }
-        </style>
-
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <link rel="stylesheet" href="font/meslo.css"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/diff/dist/diff.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/github.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html-ui-slim.min.js"></script>
-
-        <link
-            rel="stylesheet"
-            data-name="vs/editor/editor.main"
-            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.css"
-        />
-		<script>
-			var require = { paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs' } };
-		</script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/loader.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.nls.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.js"></script>
+        <link rel="stylesheet" data-name="vs/editor/editor.main"
+            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.css"/>
+        <script>
+            var require = { paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs' } };
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/loader.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.nls.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.js"></script>
         
         <script>
             const knyteSpaceApi = {
