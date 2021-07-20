@@ -94,15 +94,22 @@
                     containerElement.appendChild(document.createElement('br'));
                     function updateSize(e)
                     {
-                        console.log(editor.getContainerDomNode().id);
-                        console.log(e);
+                        //console.log(editor.getContainerDomNode().id);
+                        //console.log(e);
                         const container = editor.getContainerDomNode();
                         const width = editor.getContentWidth();
                         const height = editor.getContentHeight();
-                        console.log({width, height});
-                        container.style.width = width + 80 + 'px';
-                        container.style.height = height + 'px';
-                        editor.layout();
+                        //console.log({width, height});
+                        const {lineNumber, column} = editor.getPosition();
+                        const currentLineWidthInPixels = editor.getOffsetForColumn(lineNumber, column);
+                        //console.log(currentLineWidthInPixels);
+                        if (width >= currentLineWidthInPixels)
+                        {
+                            container.style.width = width + 80 + 'px';
+                            container.style.height = height + 'px';
+                            editor.layout();
+
+                        }
                     }
                     editor.onDidContentSizeChange((e) => updateSize(e));
                     editor.layout();
