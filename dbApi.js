@@ -110,7 +110,7 @@ app.post('/updateknyte/:knyteId/content', async (req, res) => {
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
 // serve statics
-const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/MesloLGM-Bold.ttf',
+const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
 app.get('/*', (req, res) => {
     const resourceId = req.path === '/' ? '/index.html' : req.path;
