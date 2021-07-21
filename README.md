@@ -2,7 +2,16 @@
 Another point of view on modular semantics development of knowledge bases.
 
 ## ussage
-knyte.space is a web operational system implementing fileless conception of semantic web. so it can be used in any activity related to knowledge, information and data processing.
+knyte.space is a web operational system implementing fileless conception of semantic web. So it can be used in any activity related to knowledge, information and data processing.
+
+## toolset
+### Google Chrome
+### GitHub
+Web service + Desktop app
+### VS Code
+### Heroku
+Node dyno + Postgres add-on
+### TablePlus
 
 ## infrastructure
 Entire project made to be hosted in a single Heroku app.
