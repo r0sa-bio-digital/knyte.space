@@ -22,7 +22,7 @@
                 bootloaderKnyteId: '2ac04735-106f-4179-aa49-bdbe5e740d77',
                 viewportElement: undefined,
                 initialKnytes: undefined,
-                promptOnExit: () => {return true;}
+                promptOnExit: () => {return 'Unsaved changes detected. Sure want to exit?';}
             };
 
             async function onLoad()
@@ -34,9 +34,7 @@
                     const json = await response.json();
                     knyteSpaceApi.initialKnytes = json.result;
                     window.onbeforeunload = (event) => {
-                        const e = event || window.event;
-                        if (knyteSpaceApi.promptOnExit())
-                            e.preventDefault();
+                        return knyteSpaceApi.promptOnExit();
                     };
                 }
 
