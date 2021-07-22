@@ -22,6 +22,7 @@
                 bootloaderKnyteId: '2ac04735-106f-4179-aa49-bdbe5e740d77',
                 viewportElement: undefined,
                 initialKnytes: undefined,
+                promptOnExit: () => {return true;}
             };
 
             async function onLoad()
@@ -32,6 +33,11 @@
                     const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                     const json = await response.json();
                     knyteSpaceApi.initialKnytes = json.result;
+                    window.onbeforeunload = (event) => {
+                        const e = event || window.event;
+                        if (knyteSpaceApi.promptOnExit())
+                            e.preventDefault();
+                    };
                 }
 
                 // get bootloader knyte
