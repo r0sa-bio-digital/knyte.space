@@ -42,17 +42,20 @@ async function runQuery(queryString) {
         await client.connect();
     } catch(e) {
         console.warn(e);
+        return {error: e, step: 'client connect'};
     }
     let result = {};
     try {
         result = (await client.query(queryString)).rows;
     } catch (e) {
         console.warn(e);
+        return {error: e, step: 'client query'};
     }
     try {
         await client.end();
     } catch(e) {
         console.warn(e);
+        return {error: e, step: 'client end'};
     }
     return result;
 }
@@ -94,21 +97,8 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     const originId = req.params.originId.split('=')[1];
     const originIdValue = originId !== 'null' ? "'" + originId + "'" : 'NULL';
     const queryString = 'UPDATE "public"."knytes" SET "origin_id" = ' + originIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
-    console.log('queryString');
-    try
-    {
-        const result = await runQuery(queryString);
-        console.log('result');
-        console.log(result);
-        res.send(JSON.stringify({result, knyteId}));
-    }
-    catch(e)
-    {
-        const error = JSON.stringify(e);
-        console.log('error');
-        console.log(error);
-        res.send(error);
-    }
+    const result = await runQuery(queryString);
+    res.send(JSON.stringify({result, knyteId}));
 });
 app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
