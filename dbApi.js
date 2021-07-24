@@ -97,7 +97,9 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     const originId = req.params.originId.split('=')[1];
     const originIdValue = originId !== 'null' ? "'" + originId + "'" : 'NULL';
     const queryString = 'UPDATE "public"."knytes" SET "origin_id" = ' + originIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
+    console.log(queryString);
     const result = await runQuery(queryString);
+    console.log(result);
     res.send(JSON.stringify({result, knyteId}));
 });
 app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => {
