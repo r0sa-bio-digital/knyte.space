@@ -98,12 +98,14 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     try
     {
         const result = await runQuery(queryString);
+        console.log('result');
         console.log(result);
         res.send(JSON.stringify({result, knyteId}));
     }
     catch(e)
     {
         const error = JSON.stringify(e);
+        console.log('error');
         console.log(error);
         res.send(error);
     }
