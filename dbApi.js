@@ -49,7 +49,7 @@ async function runQuery(queryString) {
         result = (await client.query(queryString)).rows;
     } catch (e) {
         console.warn(e);
-        return {error: e, step: 'client query'};
+        result = {error: e, step: 'client query'};
     }
     try {
         await client.end();
