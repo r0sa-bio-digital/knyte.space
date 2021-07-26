@@ -37,10 +37,25 @@
             {
                 // init core api
                 {
+                    // resolve access
+                    const accessTokenPath = 'knyte.space access-token';
+                    knyteSpaceApi.localAccessToken = localStorage.getItem(accessTokenPath);
+                    if (!knyteSpaceApi.localAccessToken)
+                    {
+                        const newAccessToken = prompt('Enter your access token for the system:', '');
+                        if (newAccessToken)
+                            localStorage.setItem(accessTokenPath, newAccessToken);
+                        alert('Webpage will be reloaded in 300 ms for entrering the system again.');
+                        setTimeout(() => {location.reload();}, 300);
+                        return;
+                    }
+                    // resolve viewport
                     knyteSpaceApi.viewportElement = document.getElementById('viewport');
+                    // initialise knytes
                     const response = await fetch('https://knyte-space.herokuapp.com/knytes');
                     const json = await response.json();
                     knyteSpaceApi.initialKnytes = json.result;
+                    // initialise warnigs on exit
                     window.onbeforeunload = (event) => {
                         return knyteSpaceApi.promptOnExit();
                     };
