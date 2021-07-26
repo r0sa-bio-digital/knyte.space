@@ -52,7 +52,9 @@
                     // resolve viewport
                     knyteSpaceApi.viewportElement = document.getElementById('viewport');
                     // initialise knytes
-                    const response = await fetch('https://knyte-space.herokuapp.com/knytes');
+                    const response = await fetch(
+                        'https://knyte-space.herokuapp.com/knytes', 
+                        {headers: {accesstoken: knyteSpaceApi.localAccessToken}});
                     const json = await response.json();
                     knyteSpaceApi.initialKnytes = json.result;
                     // initialise warnigs on exit
@@ -62,7 +64,9 @@
                 }
 
                 // get bootloader knyte
-                const response = await fetch('https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId);
+                const response = await fetch(
+                    'https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId,
+                    {headers: {accesstoken: knyteSpaceApi.localAccessToken}});
                 const json = await response.json();
                 const bootloaderKnyte = json.result[0];
                 // run bootloader code
