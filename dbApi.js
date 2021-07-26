@@ -1,5 +1,6 @@
 // common instances
 const uuid = require('uuid').v4;
+const uuidVersion = require('uuid').version;
 const app = require('express')();
 const bodyParser = require('body-parser')
 const http = require('http').Server(app);
@@ -14,6 +15,13 @@ const accessTokens = {
 const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
 app.use(bodyParser.json());
+// access tokens format verification
+{
+    if (uuidVersion(accessTokens.godLike) !== 4)
+        throw Error('Invalid version of accessTokens.godLike');
+    if (uuidVersion(accessTokens.readOnly) !== 4)
+        throw Error('Invalid version of accessTokens.godLike');
+}
 // common functions
 async function listenDb() {
     const client = new pg.Client({
