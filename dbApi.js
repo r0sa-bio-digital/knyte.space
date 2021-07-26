@@ -63,6 +63,14 @@ async function runQuery(queryString) {
     }
     return result;
 }
+function checkAccess(accessToken, role)
+{
+    if (accessToken === accessTokens.godLike)
+        return true;
+    if (role === 'read-only' && accessToken === accessTokens.readOnly)
+        return true;
+    return false;
+}
 // test kit
 app.get('/ping', async (req, res) => {
     // public method
@@ -75,6 +83,12 @@ app.get('/now', async (req, res) => {
 });
 app.get('/bot', async (req, res) => {
     // read-only method
+    if (!checkAccess(req.get('accesstoken'), 'read-only'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     await ioClient.connect();
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
@@ -82,29 +96,59 @@ app.get('/bot', async (req, res) => {
 // db interface
 app.get('/knytes', async (req, res) => {
     // read only method
+    if (!checkAccess(req.get('accesstoken'), 'read-only'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id";';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/knyte/:knyteId', async (req, res) => {
     // read only method
+    if (!checkAccess(req.get('accesstoken'), 'read-only'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/newknyte', async (req, res) => {
     // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = uuid();
     const queryString = 'INSERT INTO "public"."knytes" ("knyte_id") VALUES (\'' + knyteId + '\');';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
 app.get('/deleteknyte/:knyteId', async (req, res) => {
     // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'DELETE FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
 app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = req.params.knyteId.split('=')[1];
     const originId = req.params.originId.split('=')[1];
     const originIdValue = originId !== 'null' ? "'" + originId + "'" : 'NULL';
@@ -114,6 +158,12 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
 });
 app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => {
     // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = req.params.knyteId.split('=')[1];
     const terminationId = req.params.terminationId.split('=')[1];
     const terminationIdValue = terminationId !== 'null' ? "'" + terminationId + "'" : 'NULL';
@@ -122,6 +172,12 @@ app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => 
 });
 app.post('/updateknyte/:knyteId/content', async (req, res) => {
     // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
     const knyteId = req.params.knyteId.split('=')[1];
     const contentValue = req.body.content ? "'" + req.body.content.replaceAll("'", "''") + "'" : 'NULL'; // replaceAll for pg value string encoding
     const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
