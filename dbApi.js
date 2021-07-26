@@ -20,7 +20,7 @@ app.use(bodyParser.json());
     if (uuidVersion(accessTokens.godLike) !== 4)
         throw Error('Invalid version of accessTokens.godLike');
     if (uuidVersion(accessTokens.readOnly) !== 4)
-        throw Error('Invalid version of accessTokens.godLike');
+        throw Error('Invalid version of accessTokens.readOnly');
 }
 // common functions
 async function listenDb() {
