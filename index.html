@@ -46,10 +46,15 @@
                         const newAccessToken = prompt('Enter your system access token:', '');
                         if (newAccessToken === null)
                             throw Error('No access token given');
-                        localStorage.setItem(accessTokenPath, newAccessToken);
+                        // don't allow any symbols except uuid v4 specific
+                        //      otherwise strange bugs are possible
+                        const filteredAccessToken = newAccessToken.replace(/[^A-Fa-f 0-9 -]*/g, '');
+                        localStorage.setItem(accessTokenPath, filteredAccessToken);
                         setTimeout(() => {location.reload();}, 200);
                         return;
                     }
+                    else
+                        console.info('welcome to knyte space');
                     // resolve viewport
                     knyteSpaceApi.viewportElement = document.getElementById('viewport');
                     // initialise knytes
