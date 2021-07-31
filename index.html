@@ -35,8 +35,6 @@
 
             async function onLoad()
             {
-                console.info('welcome to knyte space');
-                
                 // init core api
                 {
                     // resolve access
@@ -44,6 +42,7 @@
                     knyteSpaceApi.localAccessToken = localStorage.getItem(accessTokenPath);
                     if (knyteSpaceApi.localAccessToken === null)
                     {
+                        console.info('login to knyte space');                        
                         const newAccessToken = prompt('Enter your system access token:', '');
                         if (newAccessToken === null)
                             throw Error('No access token given');
@@ -51,6 +50,8 @@
                         setTimeout(() => {location.reload();}, 200);
                         return;
                     }
+                    else
+                        console.info('welcome to knyte space');
                     // resolve viewport
                     knyteSpaceApi.viewportElement = document.getElementById('viewport');
                     // initialise knytes
