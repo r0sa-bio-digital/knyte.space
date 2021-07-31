@@ -19,7 +19,9 @@ app.use(bodyParser.json());
 {
     if (uuidVersion(accessTokens.godLike) !== 4)
         throw Error('Invalid version of accessTokens.godLike');
-    if (uuidVersion(accessTokens.readOnly) !== 4)
+    console.log('accessTokens.readOnly');
+    console.log(accessTokens.readOnly);
+    if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
         throw Error('Invalid version of accessTokens.readOnly');
 }
 // common functions
@@ -75,7 +77,7 @@ function checkAccess(accessToken, role)
 {
     if (accessToken === accessTokens.godLike)
         return true;
-    if (role === 'read-only' && accessToken === accessTokens.readOnly)
+    if (role === 'read-only' && accessTokens.readOnly && accessToken === accessTokens.readOnly)
         return true;
     return false;
 }
