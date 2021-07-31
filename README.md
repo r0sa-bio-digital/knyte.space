@@ -25,5 +25,5 @@ Backend serves frontend, no extra hosting needed.
 ### access
 Create GOD_LIKE_ACCESS_TOKEN and READ_ONLY_ACCESS_TOKEN at Heroku Project -> Settings -> Config Vars.
 Use uuid v4 values to initialise these env vars.
-Give GOD_LIKE_ACCESS_TOKEN to root admins of the system.
-Give READ_ONLY_ACCESS_TOKEN to trusted spectators of the system.
+GOD_LIKE_ACCESS_TOKEN is a required role to start server and use frontend. Give it to root admins of the system.
+READ_ONLY_ACCESS_TOKEN is optional. Give it to trusted spectators of the system, if there are any.
