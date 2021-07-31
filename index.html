@@ -40,13 +40,13 @@
                     // resolve access
                     const accessTokenPath = 'knyte.space access-token';
                     knyteSpaceApi.localAccessToken = localStorage.getItem(accessTokenPath);
-                    if (!knyteSpaceApi.localAccessToken)
+                    if (knyteSpaceApi.localAccessToken === null)
                     {
-                        const newAccessToken = prompt('Enter your access token for the system:', '');
-                        if (newAccessToken)
-                            localStorage.setItem(accessTokenPath, newAccessToken);
-                        alert('Webpage will be reloaded in 300 ms for entrering the system again.');
-                        setTimeout(() => {location.reload();}, 300);
+                        const newAccessToken = prompt('Enter your system access token:', '');
+                        if (newAccessToken === null)
+                            throw Error('No access token given');
+                        localStorage.setItem(accessTokenPath, newAccessToken);
+                        setTimeout(() => {location.reload();}, 200);
                         return;
                     }
                     // resolve viewport
