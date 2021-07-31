@@ -35,6 +35,8 @@
 
             async function onLoad()
             {
+                console.info('welcome to knyte space');
+                
                 // init core api
                 {
                     // resolve access
@@ -69,24 +71,29 @@
                         localStorage.removeItem(accessTokenPath);
                         return;
                     }
+                    console.info('\tapi initialised');
                 }
 
-                // get bootloader knyte
-                const response = await fetch(
-                    'https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId,
-                    {headers: {accesstoken: knyteSpaceApi.localAccessToken}});
-                const json = await response.json();
-                const bootloaderKnyte = json.result[0];
-                // run bootloader code
-                const {content} = bootloaderKnyte;
-                try
+                // boot the system
                 {
-                    const bootloaderFunction = new Function(content);
-                    bootloaderFunction();
-                }
-                catch(e)
-                {
-                    throw e;
+                    console.info('\tbooting started');
+                    // get bootloader knyte
+                    const response = await fetch(
+                        'https://knyte-space.herokuapp.com/knyte/knyteId=' + knyteSpaceApi.bootloaderKnyteId,
+                        {headers: {accesstoken: knyteSpaceApi.localAccessToken}});
+                    const json = await response.json();
+                    const bootloaderKnyte = json.result[0];
+                    // run bootloader code
+                    const {content} = bootloaderKnyte;
+                    try
+                    {
+                        const bootloaderFunction = new Function(content);
+                        bootloaderFunction();
+                    }
+                    catch(e)
+                    {
+                        throw e;
+                    }
                 }
             }
         </script>
