@@ -67,6 +67,7 @@
                     else if (response.status === 401) // Unauthorized
                     {
                         localStorage.removeItem(accessTokenPath);
+                        return;
                     }
                 }
 
