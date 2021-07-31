@@ -19,8 +19,6 @@ app.use(bodyParser.json());
 {
     if (uuidVersion(accessTokens.godLike) !== 4)
         throw Error('Invalid version of accessTokens.godLike');
-    console.log('accessTokens.readOnly');
-    console.log(accessTokens.readOnly);
     if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
         throw Error('Invalid version of accessTokens.readOnly');
 }
