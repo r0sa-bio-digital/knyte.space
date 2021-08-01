@@ -26,6 +26,8 @@
             }
         </style>
         <script>
+            console.info('welcome to knyte space');
+
             const knyteSpaceApi = {
                 AsyncFunction: Object.getPrototypeOf(async function(){}).constructor,
                 viewportElement: undefined,
@@ -37,7 +39,6 @@
             {
                 // boot the system
                 {
-                    console.info('\tbooting started');
                     // resolve viewport
                     knyteSpaceApi.viewportElement = document.getElementById('viewport');
                     // get bootloader knyte
