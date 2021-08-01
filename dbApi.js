@@ -209,9 +209,9 @@ app.get('/runknyte/:knyteId', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     const knyte = await runQuery(queryString);
     console.log('knyte.content');
-    consele.log(knyte.content);
+    console.log(knyte.content);
     const knyteFunction = new Function('thisKnyte', knyte.content);
-    consele.log(knyteFunction);
+    console.log(knyteFunction);
     knyteFunction(knyte);
     res.status(200).end();
 });
