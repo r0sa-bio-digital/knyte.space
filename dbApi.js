@@ -197,6 +197,22 @@ app.post('/updateknyte/:knyteId/content', async (req, res) => {
     const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
+app.post('/runknyte/:knyteId', async (req, res) => {
+    // god-like method
+    if (!checkAccess(req.get('accesstoken'), 'god-like'))
+    {
+        res.status(401).end();
+        return;
+    }
+
+    const knyteId = req.params.knyteId.split('=')[1];
+    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
+    const knyte = await runQuery(queryString);
+    const sourceCode = result.content;
+    const knyteFunction = new Function('thisKnyte', sourceCode);
+    knyteFunction(knyte);
+    res.status(200).end();
+});
 // serve statics
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
     '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
