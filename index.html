@@ -27,6 +27,7 @@
         </style>
         <script>
             const knyteSpaceApi = {
+                AsyncFunction: Object.getPrototypeOf(async function(){}).constructor,
                 viewportElement: undefined,
                 initialKnytes: undefined,
                 promptOnExit: () => {return undefined;}
@@ -47,7 +48,7 @@
                     const {content} = bootloaderKnyte;
                     try
                     {
-                        const bootloaderFunction = new AsyncFunction('thisKnyte', content);
+                        const bootloaderFunction = new knyteSpaceApi.AsyncFunction('thisKnyte', content);
                         await bootloaderFunction(bootloaderKnyte);
                     }
                     catch(e)
