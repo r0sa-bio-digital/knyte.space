@@ -245,17 +245,12 @@ ioClient.on("disconnect", () => {
 // boot the system
 console.info('server booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-function testFromRoot()
-{
-    return 'this is root';
-}
-const serverContext = {app, testFromRoot, connectionString};
+const serverContext = {app, uuid};
 runQuery(queryString).then(
     (result) => {
         const serverBootloaderKnyte = result[0];
         try
         {
-            console.log(testFromRoot());
             const knyteFunction = new Function('thisKnyte, context', serverBootloaderKnyte.content);
             knyteFunction(serverBootloaderKnyte, serverContext);
         }
