@@ -82,15 +82,6 @@ function checkAccess(accessToken, role)
     return false;
 }
 // test kit
-app.get('/ping', async (req, res) => {
-    // public method
-    res.send(JSON.stringify({result: 'pong ' + uuid()}));
-});
-app.get('/now', async (req, res) => {
-    // public method
-    const queryString = 'SELECT NOW()';
-    res.send(JSON.stringify({result: await runQuery(queryString)}));
-});
 app.get('/bot', async (req, res) => {
     // read-only method
     if (!checkAccess(req.get('accesstoken'), 'read-only'))
