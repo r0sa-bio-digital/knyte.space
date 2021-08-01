@@ -197,7 +197,7 @@ app.post('/updateknyte/:knyteId/content', async (req, res) => {
     const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
-app.post('/runknyte/:knyteId', async (req, res) => {
+app.get('/runknyte/:knyteId', async (req, res) => {
     // god-like method
     if (!checkAccess(req.get('accesstoken'), 'god-like'))
     {
