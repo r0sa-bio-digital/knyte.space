@@ -8,8 +8,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.1/styles/github.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/diff2html/bundles/css/diff2html.min.css" />
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/diff2html/bundles/js/diff2html-ui-slim.min.js"></script>
-        <link rel="stylesheet" data-name="vs/editor/editor.main"
-            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.css"/>
+        <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs/editor/editor.main.min.css"/>
         <script>
             var require = { paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.0/min/vs' } };
         </script>
@@ -27,40 +26,35 @@
         </style>
         <script>
             console.info('welcome to knyte space');
-
             const knyteSpaceApi = {
                 AsyncFunction: Object.getPrototypeOf(async function(){}).constructor,
                 viewportElement: undefined,
                 initialKnytes: undefined,
                 promptOnExit: () => {return undefined;}
             };
-
-            async function onLoad()
+            async function bootTheSystem()
             {
-                // boot the system
+                // resolve viewport
+                knyteSpaceApi.viewportElement = document.getElementById('viewport');
+                // get bootloader knyte
+                const response = await fetch('https://knyte-space.herokuapp.com/bootloaderknyte');
+                const json = await response.json();
+                const bootloaderKnyte = json.result[0];
+                // run bootloader code
+                const {content} = bootloaderKnyte;
+                try
                 {
-                    // resolve viewport
-                    knyteSpaceApi.viewportElement = document.getElementById('viewport');
-                    // get bootloader knyte
-                    const response = await fetch('https://knyte-space.herokuapp.com/bootloaderknyte');
-                    const json = await response.json();
-                    const bootloaderKnyte = json.result[0];
-                    // run bootloader code
-                    const {content} = bootloaderKnyte;
-                    try
-                    {
-                        const bootloaderFunction = new knyteSpaceApi.AsyncFunction('thisKnyte', content);
-                        await bootloaderFunction(bootloaderKnyte);
-                    }
-                    catch(e)
-                    {
-                        throw e;
-                    }
+                    const bootloaderFunction = new knyteSpaceApi.AsyncFunction('thisKnyte', content);
+                    await bootloaderFunction(bootloaderKnyte);
+                }
+                catch(e)
+                {
+                    throw e;
                 }
             }
         </script>
     </head>
-    <body onload="onLoad()">
+    <body onload="bootTheSystem()">
         <div id="viewport"></div>
     </body>
 </html>
