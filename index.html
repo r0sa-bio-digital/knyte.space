@@ -47,8 +47,8 @@
                     const {content} = bootloaderKnyte;
                     try
                     {
-                        const bootloaderFunction = new Function('thisKnyte', content);
-                        bootloaderFunction(bootloaderKnyte);
+                        const bootloaderFunction = new AsyncFunction('thisKnyte', content);
+                        await bootloaderFunction(bootloaderKnyte);
                     }
                     catch(e)
                     {
