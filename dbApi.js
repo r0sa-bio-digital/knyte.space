@@ -126,7 +126,7 @@ app.get('/knyte/:knyteId', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-app.get('/knyte/bootloader', async (req, res) => {
+app.get('/bootloaderknyte', async (req, res) => {
     // public method
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + bootloaderKnyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
