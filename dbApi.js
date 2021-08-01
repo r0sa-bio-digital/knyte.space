@@ -209,9 +209,17 @@ app.get('/runknyte/:knyteId', async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     const result = await runQuery(queryString);
     const knyte = result[0];
-    const knyteFunction = new Function('thisKnyte', knyte.content);
-    knyteFunction(knyte);
-    res.status(200).end();
+    try
+    {
+        const knyteFunction = new Function('thisKnyte', knyte.content);
+        knyteFunction(knyte);
+        res.status(200).end();
+    }
+    catch (e)
+    {
+        console.error(e);
+        res.status(500).end();
+    }
 });
 // serve statics
 const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
