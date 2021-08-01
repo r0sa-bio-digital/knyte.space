@@ -222,14 +222,6 @@ app.get('/runknyte/:knyteId', async (req, res) => {
         res.status(500).end();
     }
 });
-// serve statics
-const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
-    '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
-app.get('/*', (req, res) => {
-    // public method
-    const resourceId = req.path === '/' ? '/index.html' : req.path;
-    public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
-});
 // event handlers for realtime updates
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
@@ -263,6 +255,14 @@ runQuery(queryString).then(
             console.error('server bootloader failed');
             console.error(e);
         }
+        // serve statics
+        const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
+            '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
+        app.get('/*', (req, res) => {
+            // public method
+            const resourceId = req.path === '/' ? '/index.html' : req.path;
+            public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
+        });
         // run services
         http.listen(port, () => {
             console.info(`Postgres/Socket.IO server running at port ${port}`);
