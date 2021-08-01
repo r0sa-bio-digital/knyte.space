@@ -237,11 +237,7 @@ ioClient.on("disconnect", () => {
 // boot the system
 console.info('server booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-function registerAppGet(path, callback)
-{
-    app.get(path, callback);
-}
-const serverContext = {registerAppGet, uuid};
+const serverContext = {app, uuid};
 runQuery(queryString).then(
     (result) => {
         const serverBootloaderKnyte = result[0];
