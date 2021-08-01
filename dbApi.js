@@ -208,8 +208,7 @@ app.get('/runknyte/:knyteId', async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     const knyte = await runQuery(queryString);
-    const sourceCode = result.content;
-    const knyteFunction = new Function('thisKnyte', sourceCode);
+    const knyteFunction = new Function('thisKnyte', knyte.content);
     knyteFunction(knyte);
     res.status(200).end();
 });
