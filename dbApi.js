@@ -244,25 +244,29 @@ ioClient.on("disconnect", () => {
 });
 // boot the system
 console.info('server booting started');
-{
-    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-    const result = await runQuery(queryString);
-    const serverBootloaderKnyte = result[0];
-    try
-    {
-        const knyteFunction = new Function('thisKnyte', serverBootloaderKnyte.content);
-        knyteFunction(serverBootloaderKnyte);
+const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
+runQuery(queryString).then(
+    (result) => {
+        const serverBootloaderKnyte = result[0];
+        try
+        {
+            const knyteFunction = new Function('thisKnyte', serverBootloaderKnyte.content);
+            knyteFunction(serverBootloaderKnyte);
+        }
+        catch (e)
+        {
+            console.error('server bootloader failed');
+            console.error(e);
+        }
+        // run services
+        http.listen(port, () => {
+            console.info(`Postgres/Socket.IO server running at port ${port}`);
+        });
+        listenDb().then(
+            () => {
+                console.info(`Server is listening db.notify.channel.watch_knytes_table`);
+                console.info('system ready');
+            }
+        );
     }
-    catch (e)
-    {
-        console.error('server bootloader failed');
-        console.error(e);
-    }
-}
-// run services
-http.listen(port, () => {
-    console.info(`Postgres/Socket.IO server running at port ${port}`);
-});
-await listenDb();
-console.info(`Server is listening db.notify.channel.watch_knytes_table`);
-console.info('system ready');
+);
