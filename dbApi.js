@@ -12,6 +12,7 @@ const accessTokens = {
     godLike: process.env.GOD_LIKE_ACCESS_TOKEN,
     readOnly: process.env.READ_ONLY_ACCESS_TOKEN,
 };
+const bootloaderKnyteId = '2ac04735-106f-4179-aa49-bdbe5e740d77';
 const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
 app.use(bodyParser.json());
@@ -123,6 +124,11 @@ app.get('/knyte/:knyteId', async (req, res) => {
 
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
+    res.send(JSON.stringify({result: await runQuery(queryString)}));
+});
+app.get('/knyte/bootloader', async (req, res) => {
+    // public method
+    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + bootloaderKnyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
 app.get('/newknyte', async (req, res) => {
