@@ -1,3 +1,5 @@
+console.info('welcome to knyte space');
+
 // common instances
 const uuid = require('uuid').v4;
 const uuidVersion = require('uuid').version;
@@ -226,7 +228,7 @@ ioClient.on("disconnect", () => {
     dbNotificationBotConnected = false;
 });
 // boot the system
-console.info('server booting started');
+console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
 const serverContext = {app, uuid, runQuery};
 runQuery(queryString).then(
@@ -239,7 +241,7 @@ runQuery(queryString).then(
         }
         catch (e)
         {
-            console.error('server bootloader failed');
+            console.error('\tserver bootloader failed');
             console.error(e);
         }
         // serve statics
@@ -252,12 +254,12 @@ runQuery(queryString).then(
         });
         // run services
         http.listen(port, () => {
-            console.info(`Postgres/Socket.IO server running at port ${port}`);
+            console.info(`\tPostgres/Socket.IO server running at port ${port}`);
         });
         listenDb().then(
             () => {
-                console.info(`Server is listening db.notify.channel.watch_knytes_table`);
-                console.info('system ready');
+                console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
+                console.info('\tsystem ready');
             }
         );
     }
