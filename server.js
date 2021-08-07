@@ -94,12 +94,11 @@ runQuery(queryString).then( async (result) => {
     try {
         await client.connect();
         client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
-        const reponse = await client.query('LISTEN watch_knytes_table');    
-        console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
-        console.info(reponse);
-        http.listen(port, () => console.info(`\tServer running at port ${port}`));
-        console.info('\tsystem ready');
+        await client.query('LISTEN watch_knytes_table');    
+        console.info(`\tserver is listening db.notify.channel.watch_knytes_table`);
+        http.listen(port, () => console.info(`\tServer is ready and running at port ${port}`));
     } catch(e) {
-        e => console.error(e);
+        console.error(`\tserver failed`);
+        console.error(e);
     }
 });
