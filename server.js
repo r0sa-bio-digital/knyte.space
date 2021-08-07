@@ -100,6 +100,12 @@ app.get('/clients', auth.readOnly, async (req, res) => {
     }
     res.send(JSON.stringify(result));
 });
+app.get('/send/:socketId', auth.readOnly, async (req, res) => {
+    const socketId = req.params.socketId.split('=')[1];
+    const result = io.to('/#' + socketId).emit('chat message', 'I am @ personal message to ' + socketId);
+    console.log(result);
+    res.status(200).end();
+});
 // event handlers for realtime updates
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
