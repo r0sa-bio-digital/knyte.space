@@ -21,15 +21,6 @@ if (uuidVersion(accessTokens.godLike) !== 4)
 if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
     throw Error('Invalid version of accessTokens.readOnly');
 // common functions
-async function getSockets() {
-    return await io.fetchSockets();
-}
-function broadcastMessage(message) {
-    io.emit('chat message', message);
-}
-function directMessage(socketId, message) {
-    io.to(socketId).emit('chat message', message);
-}
 async function listenDb() {
     const client = new pg.Client({
         connectionString,
@@ -44,7 +35,7 @@ async function listenDb() {
         console.warn(e);
     }
     client.on('notification', async function(msg) {
-        broadcastMessage(JSON.stringify(msg));
+        io.emit('chat message', JSON.stringify(msg));
     });
     const query = client.query('LISTEN watch_knytes_table');    
 }
@@ -99,7 +90,7 @@ io.on('connection', (socket) => {
 // boot the system
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-const serverContext = {app, uuid, auth, runQuery, broadcastMessage, getSockets, directMessage};
+const serverContext = {app, uuid, io, auth, runQuery};
 runQuery(queryString).then(
     (result) => {
         const serverBootloaderKnyte = result[0];
