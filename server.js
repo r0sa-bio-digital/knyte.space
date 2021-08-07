@@ -96,7 +96,7 @@ runQuery(queryString).then( async (result) => {
         client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
         await client.query('LISTEN watch_knytes_table');    
         console.info(`\tserver is listening db.notify.channel.watch_knytes_table`);
-        http.listen(port, () => console.info(`\tServer is ready and running at port ${port}`));
+        http.listen(port, () => console.info(`\tserver is ready and running at port ${port}`));
     } catch(e) {
         console.error(`\tserver failed`);
         console.error(e);
