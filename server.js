@@ -100,7 +100,7 @@ app.get('/bot', auth.readOnly, async (req, res) => {
     res.send(JSON.stringify({result: await broadcastMessage('chat message', 'I am @ B0T 🤖')}));
 });
 app.get('/sockets', auth.readOnly, async (req, res) => {
-    const result = getSockets().map(s => s.id);
+    const result = (await getSockets()).map(s => s.id);
     res.send(JSON.stringify(result));
 });
 app.get('/send/:socketId', auth.godLike, async (req, res) => {
