@@ -13,7 +13,6 @@ const accessTokens = {
     godLike: process.env.GOD_LIKE_ACCESS_TOKEN,
     readOnly: process.env.READ_ONLY_ACCESS_TOKEN,
 };
-const clientBootloaderKnyteId = '2ac04735-106f-4179-aa49-bdbe5e740d77';
 const serverBootloaderKnyteId = 'b2f05808-577c-47da-86d9-67ab978a0fda';
 const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
@@ -90,68 +89,6 @@ app.get('/bot', auth.readOnly, async (req, res) => {
     await ioClient.connect();
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
-});
-// db interface
-app.get('/knytes', auth.readOnly, async (req, res) => {
-    const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id";';
-    res.send(JSON.stringify({result: await runQuery(queryString)}));
-});
-app.get('/knyte/:knyteId', auth.readOnly, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
-    res.send(JSON.stringify({result: await runQuery(queryString)}));
-});
-app.get('/clientbootloaderknyte', auth.public, async (req, res) => {
-    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + clientBootloaderKnyteId + '\';';
-    res.send(JSON.stringify({result: await runQuery(queryString)}));
-});
-app.get('/newknyte', auth.godLike, async (req, res) => {
-    const knyteId = uuid();
-    const queryString = 'INSERT INTO "public"."knytes" ("knyte_id") VALUES (\'' + knyteId + '\');';
-    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
-});
-app.get('/deleteknyte/:knyteId', auth.godLike, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const queryString = 'DELETE FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
-    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
-});
-app.get('/updateknyte/:knyteId/origin/:originId', auth.godLike, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const originId = req.params.originId.split('=')[1];
-    const originIdValue = originId !== 'null' ? "'" + originId + "'" : 'NULL';
-    const queryString = 'UPDATE "public"."knytes" SET "origin_id" = ' + originIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
-    const result = await runQuery(queryString);
-    res.send(JSON.stringify({result, knyteId}));
-});
-app.get('/updateknyte/:knyteId/termination/:terminationId', auth.godLike, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const terminationId = req.params.terminationId.split('=')[1];
-    const terminationIdValue = terminationId !== 'null' ? "'" + terminationId + "'" : 'NULL';
-    const queryString = 'UPDATE "public"."knytes" SET "termination_id" = ' + terminationIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
-    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
-});
-app.post('/updateknyte/:knyteId/content', auth.godLike, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const contentValue = req.body.content ? "'" + req.body.content.replaceAll("'", "''") + "'" : 'NULL'; // replaceAll for pg value string encoding
-    const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
-    res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
-});
-app.get('/runknyte/:knyteId', auth.godLike, async (req, res) => {
-    const knyteId = req.params.knyteId.split('=')[1];
-    const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
-    const result = await runQuery(queryString);
-    const knyte = result[0];
-    try
-    {
-        const knyteFunction = new Function('thisKnyte', knyte.content);
-        knyteFunction(knyte);
-        res.status(200).end();
-    }
-    catch (e)
-    {
-        console.error(e);
-        res.status(500).end();
-    }
 });
 // event handlers for realtime updates
 io.on('connection', (socket) => {
