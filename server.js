@@ -91,35 +91,30 @@ io.on('connection', (socket) => {
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
 const serverContext = {app, uuid, io, auth, runQuery};
-runQuery(queryString).then(
-    (result) => {
-        const serverBootloaderKnyte = result[0];
-        try
-        {
-            const knyteFunction = new Function('thisKnyte, context', serverBootloaderKnyte.content);
-            knyteFunction(serverBootloaderKnyte, serverContext);
-        }
-        catch (e)
-        {
-            console.error('\tserver bootloader failed');
-            console.error(e);
-        }
-        // serve statics
-        const public = ['/index.html', '/chat.html', '/favicon.ico'];
-        app.get('/*', (req, res) => {
-            // public method
-            const resourceId = req.path === '/' ? '/index.html' : req.path;
-            public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
-        });
-        // run services
-        http.listen(port, () => {
-            console.info(`\tPostgres/Socket.IO server running at port ${port}`);
-        });
-        listenDb().then(
-            () => {
-                console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
-                console.info('\tsystem ready');
-            }
-        );
+runQuery(queryString).then( result => {
+    const serverBootloaderKnyte = result[0];
+    try {
+        const knyteFunction = new Function('thisKnyte, context', serverBootloaderKnyte.content);
+        knyteFunction(serverBootloaderKnyte, serverContext);
+    } catch (e) {
+        console.error('\tserver bootloader failed');
+        console.error(e);
     }
-);
+    // serve statics
+    const public = ['/index.html', '/chat.html', '/favicon.ico'];
+    app.get('/*', (req, res) => {
+        // public method
+        const resourceId = req.path === '/' ? '/index.html' : req.path;
+        public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
+    });
+    // run services
+    http.listen(port, () => {
+        console.info(`\tPostgres/Socket.IO server running at port ${port}`);
+    });
+    listenDb().then(
+        () => {
+            console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
+            console.info('\tsystem ready');
+        }
+    );
+});
