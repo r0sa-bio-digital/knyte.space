@@ -7,7 +7,6 @@ const app = express();
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
-const ioClient = require('socket.io-client')('https://knyte-space.herokuapp.com/', {transports: ['polling']});
 const connectionString = process.env.DATABASE_URL;
 const accessTokens = {
     godLike: process.env.GOD_LIKE_ACCESS_TOKEN,
@@ -15,7 +14,6 @@ const accessTokens = {
 };
 const serverBootloaderKnyteId = 'b2f05808-577c-47da-86d9-67ab978a0fda';
 const port = process.env.PORT || 3000;
-let dbNotificationBotConnected = false;
 app.use(express.json());
 // access tokens format verification
 if (uuidVersion(accessTokens.godLike) !== 4)
@@ -23,6 +21,15 @@ if (uuidVersion(accessTokens.godLike) !== 4)
 if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
     throw Error('Invalid version of accessTokens.readOnly');
 // common functions
+async function getSockets() {
+    return await io.fetchSockets();
+}
+function broadcastMessage(message) {
+    io.emit('chat message', message);
+}
+function directMessage(socketId, message) {
+    io.to(socketId).emit('chat message', message);
+}
 async function listenDb() {
     const client = new pg.Client({
         connectionString,
@@ -37,8 +44,7 @@ async function listenDb() {
         console.warn(e);
     }
     client.on('notification', async function(msg) {
-        await ioClient.connect();
-        ioClient.emit('chat message', JSON.stringify(msg));
+        broadcastMessage(JSON.stringify(msg));
     });
     const query = client.query('LISTEN watch_knytes_table');    
 }
@@ -71,15 +77,6 @@ async function runQuery(queryString) {
     }
     return result;
 }
-async function broadcastMessage(message) {
-    io.emit('chat message', message);
-}
-async function getSockets() {
-    return await io.fetchSockets();
-}
-function directMessage(socketId, message) {
-    io.to(socketId).emit('chat message', message);
-}
 const auth = {
     public: (req, res, next) => next(),
     godLike: (req, res, next) => {
@@ -98,12 +95,6 @@ io.on('connection', (socket) => {
     socket.on('chat message', msg => {
         io.emit('chat message', msg);
     });
-});
-ioClient.on('connect', () => {
-    dbNotificationBotConnected = true;
-});
-ioClient.on('disconnect', () => {
-    dbNotificationBotConnected = false;
 });
 // boot the system
 console.info('\tserver booting started');
