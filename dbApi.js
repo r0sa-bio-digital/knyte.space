@@ -7,7 +7,7 @@ const app = express();
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
-const ioClient = require("socket.io-client")('https://knyte-space.herokuapp.com/', {transports: ["polling"]});
+const ioClient = require('socket.io-client')('https://knyte-space.herokuapp.com/', {transports: ['polling']});
 const connectionString = process.env.DATABASE_URL;
 const accessTokens = {
     godLike: process.env.GOD_LIKE_ACCESS_TOKEN,
@@ -96,10 +96,10 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
     });
 });
-ioClient.on("connect", () => {
+ioClient.on('connect', () => {
     dbNotificationBotConnected = true;
 });
-ioClient.on("disconnect", () => {
+ioClient.on('disconnect', () => {
     dbNotificationBotConnected = false;
 });
 // boot the system
