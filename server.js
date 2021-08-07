@@ -120,8 +120,7 @@ runQuery(queryString).then(
             console.error(e);
         }
         // serve statics
-        const public = ['/index.html', '/chat.html', '/favicon.ico', '/font/meslo.css', '/font/MesloLGM-Bold.ttf',
-            '/font/MesloLGM-BoldItalic.ttf', '/font/MesloLGM-Italic.ttf', '/font/MesloLGM-Regular.ttf'];
+        const public = ['/index.html', '/chat.html', '/favicon.ico'];
         app.get('/*', (req, res) => {
             // public method
             const resourceId = req.path === '/' ? '/index.html' : req.path;
