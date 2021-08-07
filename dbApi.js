@@ -75,23 +75,28 @@ async function runQuery(queryString) {
     }
     return result;
 }
-function checkAccess(accessToken, role)
-{
+function checkAccess(accessToken, role) {
     if (accessToken === accessTokens.godLike)
         return true;
     if (role === 'read-only' && accessTokens.readOnly && accessToken === accessTokens.readOnly)
         return true;
     return false;
 }
+const auth = {
+    public: (req, res, next) => next(),
+    godLike: (req, res, next) => {
+        const t = req.get('accesstoken');
+        (!t) ? res.status(400).end()
+            : (t === accessTokens.godLike) ? next() : res.status(401).end();
+    },
+    readOnly: (req, res, next) => {
+        const t = req.get('accesstoken');
+        (!t) ? res.status(400).end() : (!accessTokens.readOnly) ? res.status(401).end()
+            : (t === accessTokens.godLike || t === accessTokens.readOnly) ? next() : res.status(401).end();
+    },
+};
 // test kit
-app.get('/bot', async (req, res) => {
-    // read-only method
-    if (!checkAccess(req.get('accesstoken'), 'read-only'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/bot', auth.readOnly, async (req, res) => {
     await ioClient.connect();
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
@@ -230,7 +235,7 @@ ioClient.on("disconnect", () => {
 // boot the system
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-const serverContext = {app, uuid, runQuery};
+const serverContext = {app, uuid, auth, runQuery};
 runQuery(queryString).then(
     (result) => {
         const serverBootloaderKnyte = result[0];
