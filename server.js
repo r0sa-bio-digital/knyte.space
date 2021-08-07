@@ -95,19 +95,6 @@ const auth = {
             : (t === accessTokens.godLike || t === accessTokens.readOnly) ? next() : res.status(401).end();
     },
 };
-// test kit
-app.get('/bot', auth.readOnly, async (req, res) => {
-    res.send(JSON.stringify({result: await broadcastMessage('I am @ B0T 🤖')}));
-});
-app.get('/sockets', auth.readOnly, async (req, res) => {
-    const result = (await getSockets()).map(s => s.id);
-    res.send(JSON.stringify(result));
-});
-app.get('/send/:socketId', auth.godLike, async (req, res) => {
-    const socketId = req.params.socketId.split('=')[1];
-    directMessage(socketId, 'I am @ personal message to ' + socketId);
-    res.status(200).end();
-});
 // event handlers for realtime updates
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
@@ -123,7 +110,7 @@ ioClient.on('disconnect', () => {
 // boot the system
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-const serverContext = {app, uuid, auth, runQuery};
+const serverContext = {app, uuid, auth, runQuery, broadcastMessage, getSockets, directMessage};
 runQuery(queryString).then(
     (result) => {
         const serverBootloaderKnyte = result[0];
