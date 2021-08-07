@@ -90,6 +90,10 @@ app.get('/bot', auth.readOnly, async (req, res) => {
     const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', 'I am @ B0T 🤖');
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
 });
+app.get('/clients', auth.readOnly, async (req, res) => {
+    const sockets = await io.fetchSockets();
+    res.send(JSON.stringify({sockets}));
+});
 // event handlers for realtime updates
 io.on('connection', (socket) => {
     socket.on('chat message', msg => {
