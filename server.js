@@ -69,7 +69,7 @@ io.on('connection', socket => socket.on('chat message', message => io.emit('chat
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
 const serverContext = {app, uuid, io, auth, runQuery};
-runQuery(queryString).then( result => {
+runQuery(queryString).then( async (result) => {
     const serverBootloaderKnyte = result[0];
     try {
         const knyteFunction = new Function('thisKnyte, context', serverBootloaderKnyte.content);
@@ -91,12 +91,15 @@ runQuery(queryString).then( result => {
             rejectUnauthorized: false
         }
     });
-    client.connect().then( () => {
+    try {
+        await client.connect();
         client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
-        const query = client.query('LISTEN watch_knytes_table');    
+        const reponse = await client.query('LISTEN watch_knytes_table');    
         console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
-        console.info(query);
+        console.info(reponse);
         http.listen(port, () => console.info(`\tServer running at port ${port}`));
         console.info('\tsystem ready');
-    }).catch( e => console.warn(e) );
+    } catch(e) {
+        e => console.error(e);
+    }
 });
