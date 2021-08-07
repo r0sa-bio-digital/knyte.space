@@ -72,9 +72,7 @@ async function runQuery(queryString) {
     return result;
 }
 async function broadcastMessage(message) {
-    await ioClient.connect();
-    const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', message);
-    return {connected, disconnected, id, ids, nsp};
+    io.emit('chat message', message);
 }
 async function getSockets() {
     return await io.fetchSockets();
