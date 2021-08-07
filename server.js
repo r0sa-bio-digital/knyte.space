@@ -92,7 +92,8 @@ app.get('/bot', auth.readOnly, async (req, res) => {
 });
 app.get('/clients', auth.readOnly, async (req, res) => {
     const sockets = await io.fetchSockets();
-    res.send(JSON.stringify({sockets}));
+    console.log(sockets);
+    res.status(200).end(); //res.send(JSON.stringify({sockets}));
 });
 // event handlers for realtime updates
 io.on('connection', (socket) => {
