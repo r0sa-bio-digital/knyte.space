@@ -1,5 +1,4 @@
 console.info('welcome to knyte space');
-
 // common instances
 const uuid = require('uuid').v4;
 const uuidVersion = require('uuid').version;
@@ -20,12 +19,10 @@ const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
 app.use(bodyParser.json());
 // access tokens format verification
-{
-    if (uuidVersion(accessTokens.godLike) !== 4)
-        throw Error('Invalid version of accessTokens.godLike');
-    if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
-        throw Error('Invalid version of accessTokens.readOnly');
-}
+if (uuidVersion(accessTokens.godLike) !== 4)
+    throw Error('Invalid version of accessTokens.godLike');
+if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
+    throw Error('Invalid version of accessTokens.readOnly');
 // common functions
 async function listenDb() {
     const client = new pg.Client({
@@ -75,13 +72,6 @@ async function runQuery(queryString) {
     }
     return result;
 }
-function checkAccess(accessToken, role) {
-    if (accessToken === accessTokens.godLike)
-        return true;
-    if (role === 'read-only' && accessTokens.readOnly && accessToken === accessTokens.readOnly)
-        return true;
-    return false;
-}
 const auth = {
     public: (req, res, next) => next(),
     godLike: (req, res, next) => {
@@ -102,66 +92,30 @@ app.get('/bot', auth.readOnly, async (req, res) => {
     res.send(JSON.stringify({result: {connected, disconnected, id, ids, nsp}}));
 });
 // db interface
-app.get('/knytes', async (req, res) => {
-    // read only method
-    if (!checkAccess(req.get('accesstoken'), 'read-only'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/knytes', auth.readOnly, async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" ORDER BY "knyte_id";';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-app.get('/knyte/:knyteId', async (req, res) => {
-    // read only method
-    if (!checkAccess(req.get('accesstoken'), 'read-only'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/knyte/:knyteId', auth.readOnly, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-app.get('/clientbootloaderknyte', async (req, res) => {
-    // public method
+app.get('/clientbootloaderknyte', auth.public, async (req, res) => {
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + clientBootloaderKnyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString)}));
 });
-app.get('/newknyte', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/newknyte', auth.godLike, async (req, res) => {
     const knyteId = uuid();
     const queryString = 'INSERT INTO "public"."knytes" ("knyte_id") VALUES (\'' + knyteId + '\');';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
-app.get('/deleteknyte/:knyteId', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/deleteknyte/:knyteId', auth.godLike, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'DELETE FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
-app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/updateknyte/:knyteId/origin/:originId', auth.godLike, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const originId = req.params.originId.split('=')[1];
     const originIdValue = originId !== 'null' ? "'" + originId + "'" : 'NULL';
@@ -169,41 +123,20 @@ app.get('/updateknyte/:knyteId/origin/:originId', async (req, res) => {
     const result = await runQuery(queryString);
     res.send(JSON.stringify({result, knyteId}));
 });
-app.get('/updateknyte/:knyteId/termination/:terminationId', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/updateknyte/:knyteId/termination/:terminationId', auth.godLike, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const terminationId = req.params.terminationId.split('=')[1];
     const terminationIdValue = terminationId !== 'null' ? "'" + terminationId + "'" : 'NULL';
     const queryString = 'UPDATE "public"."knytes" SET "termination_id" = ' + terminationIdValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
-app.post('/updateknyte/:knyteId/content', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.post('/updateknyte/:knyteId/content', auth.godLike, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const contentValue = req.body.content ? "'" + req.body.content.replaceAll("'", "''") + "'" : 'NULL'; // replaceAll for pg value string encoding
     const queryString = 'UPDATE "public"."knytes" SET "content" = ' + contentValue + ' WHERE "knyte_id" = \'' + knyteId + '\';';
     res.send(JSON.stringify({result: await runQuery(queryString), knyteId}));
 });
-app.get('/runknyte/:knyteId', async (req, res) => {
-    // god-like method
-    if (!checkAccess(req.get('accesstoken'), 'god-like'))
-    {
-        res.status(401).end();
-        return;
-    }
-
+app.get('/runknyte/:knyteId', auth.godLike, async (req, res) => {
     const knyteId = req.params.knyteId.split('=')[1];
     const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + knyteId + '\';';
     const result = await runQuery(queryString);
