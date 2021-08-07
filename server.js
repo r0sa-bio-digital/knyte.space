@@ -21,24 +21,6 @@ if (uuidVersion(accessTokens.godLike) !== 4)
 if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
     throw Error('Invalid version of accessTokens.readOnly');
 // common functions
-async function listenDb() {
-    const client = new pg.Client({
-        connectionString,
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    });    
-    try {
-        await client.connect();
-    } catch(e) {
-        console.warn(e);
-    }
-    client.on('notification', async function(msg) {
-        io.emit('chat message', JSON.stringify(msg));
-    });
-    const query = client.query('LISTEN watch_knytes_table');    
-}
 async function runQuery(queryString) {
     const client = new pg.Client({
         connectionString,
@@ -46,7 +28,7 @@ async function runQuery(queryString) {
             require: true,
             rejectUnauthorized: false
         }
-    });    
+    });
     try {
         await client.connect();
     } catch(e) {
@@ -82,11 +64,7 @@ const auth = {
     },
 };
 // event handlers for realtime updates
-io.on('connection', (socket) => {
-    socket.on('chat message', msg => {
-        io.emit('chat message', msg);
-    });
-});
+io.on('connection', socket => socket.on('chat message', message => io.emit('chat message', message) ) );
 // boot the system
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
@@ -100,21 +78,25 @@ runQuery(queryString).then( result => {
         console.error('\tserver bootloader failed');
         console.error(e);
     }
-    // serve statics
-    const public = ['/index.html', '/chat.html', '/favicon.ico'];
-    app.get('/*', (req, res) => {
-        // public method
+    app.get('/*', auth.public, (req, res) => {
         const resourceId = req.path === '/' ? '/index.html' : req.path;
-        public.includes(resourceId) ? res.sendFile(__dirname + resourceId) : res.status(404).end();
+        ['/index.html', '/chat.html', '/favicon.ico'].includes(resourceId)
+            ? res.sendFile(__dirname + resourceId)
+            : res.status(404).end();
     });
-    // run services
-    http.listen(port, () => {
-        console.info(`\tPostgres/Socket.IO server running at port ${port}`);
-    });
-    listenDb().then(
-        () => {
-            console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
-            console.info('\tsystem ready');
+    const client = new pg.Client({
+        connectionString,
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
         }
-    );
+    });
+    client.connect().then( () => {
+        client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
+        const query = client.query('LISTEN watch_knytes_table');    
+        console.info(`\tServer is listening db.notify.channel.watch_knytes_table`);
+        console.info(query);
+        http.listen(port, () => console.info(`\tServer running at port ${port}`));
+        console.info('\tsystem ready');
+    }).catch( e => console.warn(e) );
 });
