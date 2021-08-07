@@ -2,8 +2,8 @@ console.info('welcome to knyte space');
 // common instances
 const uuid = require('uuid').v4;
 const uuidVersion = require('uuid').version;
-const app = require('express')();
-const bodyParser = require('body-parser')
+const express = require('express');
+const app = express();
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
@@ -16,7 +16,7 @@ const accessTokens = {
 const serverBootloaderKnyteId = 'b2f05808-577c-47da-86d9-67ab978a0fda';
 const port = process.env.PORT || 3000;
 let dbNotificationBotConnected = false;
-app.use(bodyParser.json());
+app.use(express.json());
 // access tokens format verification
 if (uuidVersion(accessTokens.godLike) !== 4)
     throw Error('Invalid version of accessTokens.godLike');
