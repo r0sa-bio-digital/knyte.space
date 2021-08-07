@@ -73,14 +73,14 @@ async function runQuery(queryString) {
 }
 async function broadcastMessage(message) {
     await ioClient.connect();
-    const {connected, disconnected, id, ids, nsp} = ioClient.emit(message);
+    const {connected, disconnected, id, ids, nsp} = ioClient.emit('chat message', message);
     return {connected, disconnected, id, ids, nsp};
 }
 async function getSockets() {
     return await io.fetchSockets();
 }
 function directMessage(socketId, message) {
-    io.to(socketId).emit(message);
+    io.to(socketId).emit('chat message', message);
 }
 const auth = {
     public: (req, res, next) => next(),
@@ -97,7 +97,7 @@ const auth = {
 };
 // test kit
 app.get('/bot', auth.readOnly, async (req, res) => {
-    res.send(JSON.stringify({result: await broadcastMessage('chat message', 'I am @ B0T 🤖')}));
+    res.send(JSON.stringify({result: await broadcastMessage('I am @ B0T 🤖')}));
 });
 app.get('/sockets', auth.readOnly, async (req, res) => {
     const result = (await getSockets()).map(s => s.id);
@@ -105,7 +105,7 @@ app.get('/sockets', auth.readOnly, async (req, res) => {
 });
 app.get('/send/:socketId', auth.godLike, async (req, res) => {
     const socketId = req.params.socketId.split('=')[1];
-    directMessage(socketId, 'chat message', 'I am @ personal message to ' + socketId);
+    directMessage(socketId, 'I am @ personal message to ' + socketId);
     res.status(200).end();
 });
 // event handlers for realtime updates
