@@ -16,8 +16,8 @@ Node dyno + Postgres add-on
 ## infrastructure
 Entire project made to be hosted in a single Heroku app.
 ### db
-Installed add-on Heroku Postgres to the target app.
-Initialisation of the db will be described later...
+Install add-on Heroku Postgres to the target app.
+Restore db from actual dump, stored in "db dumps" folder, follow [instruction](https://devcenter.heroku.com/articles/heroku-postgres-backups#restoring-backups).
 ### backend
 Set up deploy from this GitHub repo or its fork.
 ### frontend
