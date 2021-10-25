@@ -27,6 +27,7 @@
         <script>
             console.info('welcome to knyte space');
             const knyteSpaceApi = {
+                apiBaseUrl: location.origin + '/',
                 AsyncFunction: Object.getPrototypeOf(async function(){}).constructor,
                 viewportElement: undefined,
                 initialKnytes: undefined,
@@ -37,7 +38,7 @@
                 // resolve viewport
                 knyteSpaceApi.viewportElement = document.getElementById('viewport');
                 // get client bootloader knyte
-                const response = await fetch('https://knyte-space.herokuapp.com/clientbootloaderknyte');
+                const response = await fetch(knyteSpaceApi.apiBaseUrl + 'clientbootloaderknyte');
                 const json = await response.json();
                 const clientBootloaderKnyte = json.result[0];
                 // run client bootloader code
