@@ -8,6 +8,10 @@
     </head>
     <body>
         <h2>Monaco Editor Sync Loading Sample</h2>
+        <div>
+            <div id="diffContainer" style="display: inline-block;"></div>
+            <button onclick="onClickDiffLayoutButton();">diff layout</button>
+        </div>
         <div id="container"></div>
         <button onclick="create();">create all</button>
         <button onclick="destroy();">destroy all</button>
@@ -22,6 +26,7 @@
             const editorsCount = 10;
             const originalCode = ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n');
             const modifiedCode = ['function z() {', '\tconsole.info("system not ready");', '}'].join('\n');
+            let diffEditor;
             const containerElement = document.getElementById('container');
             function createSingleEditor(editorElement)
             {
@@ -45,17 +50,38 @@
                     },
                 });
             }
-            function createDiffEditor(editorElement)
+            function createDiffEditor(editorElement, externModel)
             {
                 const originalModel = monaco.editor.createModel(originalCode, 'javascript');
-                const modifiedModel = monaco.editor.createModel(modifiedCode, 'javascript');
-                const editor = monaco.editor.createDiffEditor(editorElement);
+                const modifiedModel = externModel ? externModel : monaco.editor.createModel(modifiedCode, 'javascript');
+                const editor = monaco.editor.createDiffEditor(editorElement, {
+                    renderSideBySide: false,
+                    fontFamily: 'meslo',
+                    fontSize: 16,
+                    scrollBeyondLastLine: false,
+                    scrollBeyondLastColumn: false,
+                    renderWhitespace: 'none',
+                    disableMonospaceOptimizations: false,
+                    scrollbar: {
+                        vertical: 'hidden',
+                        horizontal: 'hidden',
+                        alwaysConsumeMouseWheel: false,
+                    },
+                });
                 editor.setModel({
                     original: originalModel,
                     modified: modifiedModel,
                 });
-                editor.updateOptions({renderSideBySide: false});
                 return editor;
+            }
+            function onClickDiffLayoutButton()
+            {
+                const container = document.getElementById('diffContainer');
+                const width = diffEditor.getModifiedEditor().getContentWidth();
+                const height = diffEditor.getModifiedEditor().getContentHeight();
+                container.style.width = width + 120 + 'px';
+                container.style.height = height + 'px';
+                diffEditor.layout();
             }
             function create()
             {
@@ -77,6 +103,18 @@
                         editor.layout();
                     };
                     containerElement.appendChild(layoutElement);
+                    const diffElement = document.createElement('button');
+                    diffElement.textContent = 'diff ' + i;
+                    diffElement.onclick = (e) => {
+                        if (diffEditor)
+                        {
+                            alert('diff already created');
+                            return;
+                        }
+                        diffEditor = createDiffEditor(document.getElementById('diffContainer'), editor.getModel());
+                        diffEditor.getModifiedEditor().onDidContentSizeChange((e) => onClickDiffLayoutButton());
+                    };
+                    containerElement.appendChild(diffElement);
                     containerElement.appendChild(document.createElement('br'));
                     function updateSize(e)
                     {
