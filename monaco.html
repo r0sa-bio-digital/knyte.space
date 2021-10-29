@@ -20,7 +20,43 @@
 
         <script>
             const editorsCount = 10;
+            const originalCode = ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n');
+            const modifiedCode = ['function z() {', '\tconsole.info("system not ready");', '}'].join('\n');
             const containerElement = document.getElementById('container');
+            function createSingleEditor(editorElement)
+            {
+                return monaco.editor.create(editorElement, {
+                    value: originalCode,
+                    language: 'javascript',
+                    wordWrap: 'off',
+                    wordWrapMinified: true,
+                    wrappingIndent: 'same',
+                    fontFamily: 'meslo',
+                    fontSize: 16,
+                    minimap: {enabled: false},
+                    scrollBeyondLastLine: false,
+                    scrollBeyondLastColumn: false,
+                    renderWhitespace: 'none',
+                    disableMonospaceOptimizations: false,
+                    scrollbar: {
+                        vertical: 'hidden',
+                        horizontal: 'hidden',
+                        alwaysConsumeMouseWheel: false,
+                    },
+                });
+            }
+            function createDiffEditor(editorElement)
+            {
+                const originalModel = monaco.editor.createModel(originalCode, 'javascript');
+                const modifiedModel = monaco.editor.createModel(modifiedCode, 'javascript');
+                const editor = monaco.editor.createDiffEditor(editorElement);
+                editor.setModel({
+                    original: originalModel,
+                    modified: modifiedModel,
+                });
+                editor.updateOptions({renderSideBySide: false});
+                return editor;
+            }
             function create()
             {
                 for (let i = 0; i < editorsCount; ++i)
@@ -29,25 +65,7 @@
                     editorElement.id = 'editor' + i;
                     editorElement.style = 'border: 1px solid grey; display: inline-block;';
                     containerElement.appendChild(editorElement);
-                    const editor = monaco.editor.create(editorElement, {
-                        value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-                        language: 'javascript',
-                        wordWrap: 'off',
-                        wordWrapMinified: true,
-                        wrappingIndent: 'same',
-                        fontFamily: 'meslo',
-                        fontSize: 16,
-                        minimap: {enabled: false},
-                        scrollBeyondLastLine: false,
-                        scrollBeyondLastColumn: false,
-                        renderWhitespace: 'none',
-                        disableMonospaceOptimizations: false,
-                        scrollbar: {
-                            vertical: 'hidden',
-                            horizontal: 'hidden',
-                            alwaysConsumeMouseWheel: false,
-                        },
-                    });
+                    const editor = createSingleEditor(editorElement);
                     const layoutElement = document.createElement('button');
                     layoutElement.textContent = 'layout ' + i;
                     layoutElement.onclick = (e) => {
