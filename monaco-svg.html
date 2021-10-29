@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/r0sa-bio-digital/meslo@1.0.0/meslo.css">
+        <link rel="stylesheet" data-name="vs/editor/editor.main"
+            href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/editor/editor.main.min.css"/>
+    </head>
+    <body>
+        <h2>Monaco Editor SVG Transform Sample</h2>
+        <div id="container"></div>
+        <button onclick="create();">create all</button>
+        <button onclick="destroy();">destroy all</button>
+        <script>
+            var require = { paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs' } };
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/loader.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/editor/editor.main.nls.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/editor/editor.main.min.js"></script>
+
+        <script>
+            const editorsCount = 10;
+            const originalCode = ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n');
+            const containerElement = document.getElementById('container');
+            function createSingleEditor(editorElement)
+            {
+                return monaco.editor.create(editorElement, {
+                    value: originalCode,
+                    language: 'javascript',
+                    wordWrap: 'off',
+                    wordWrapMinified: true,
+                    wrappingIndent: 'same',
+                    fontFamily: 'meslo',
+                    fontSize: 16,
+                    minimap: {enabled: false},
+                    scrollBeyondLastLine: false,
+                    scrollBeyondLastColumn: false,
+                    renderWhitespace: 'none',
+                    disableMonospaceOptimizations: false,
+                    scrollbar: {
+                        vertical: 'hidden',
+                        horizontal: 'hidden',
+                        alwaysConsumeMouseWheel: false,
+                    },
+                });
+            }
+            function create()
+            {
+                for (let i = 0; i < editorsCount; ++i)
+                {
+                    const editorElement = document.createElement('div');
+                    editorElement.id = 'editor' + i;
+                    editorElement.style = 'border: 1px solid grey; display: inline-block;';
+                    containerElement.appendChild(editorElement);
+                    const editor = createSingleEditor(editorElement);
+                    const layoutElement = document.createElement('button');
+                    layoutElement.textContent = 'layout ' + i;
+                    layoutElement.onclick = (e) => {
+                        const container = editor.getContainerDomNode();
+                        const width = editor.getContentWidth();
+                        const height = editor.getContentHeight();
+                        container.style.width = width + 80 + 'px';
+                        container.style.height = height + 'px';
+                        editor.layout();
+                    };
+                    containerElement.appendChild(layoutElement);
+                    containerElement.appendChild(document.createElement('br'));
+                    function updateSize(e)
+                    {
+                        //console.log(editor.getContainerDomNode().id);
+                        //console.log(e);
+                        const container = editor.getContainerDomNode();
+                        const width = editor.getContentWidth();
+                        const height = editor.getContentHeight();
+                        //console.log({width, height});
+                        const {lineNumber, column} = editor.getPosition();
+                        const currentLineWidthInPixels = editor.getOffsetForColumn(lineNumber, column);
+                        //console.log(currentLineWidthInPixels);
+                        if (width >= currentLineWidthInPixels)
+                        {
+                            container.style.width = width + 80 + 'px';
+                            container.style.height = height + 'px';
+                            editor.layout();
+                        }
+                    }
+                    editor.onDidContentSizeChange((e) => updateSize(e));
+                    editor.layout();
+                }
+                alert(editorsCount + ' monaco editor instances create');
+            }
+            function destroy()
+            {
+                for (let i = 0; i < editorsCount; ++i)
+                {
+                    const containerElement = document.getElementById('editor' + i);
+                    containerElement.remove();
+                }
+                containerElement.innerHTML = '';
+            }
+        </script>
+    </body>
+</html>
