@@ -15,7 +15,7 @@ const accessTokens = {
 };
 const serverBootloaderKnyteId = 'b2f05808-577c-47da-86d9-67ab978a0fda';
 const port = process.env.PORT || 3000;
-app.use(express.json());
+app.use(express.json({limit: '10mb'}));
 // access tokens format verification
 if (uuidVersion(accessTokens.godLike) !== 4)
     throw Error('Invalid version of accessTokens.godLike');
