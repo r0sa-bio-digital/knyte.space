@@ -4,6 +4,7 @@ const uuid = require('uuid').v4;
 const uuidVersion = require('uuid').version;
 const express = require('express');
 const app = express();
+const cors = require('cors');
 const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
@@ -68,7 +69,7 @@ io.on('connection', socket => socket.on('chat message', message => io.emit('chat
 // boot the system
 console.info('\tserver booting started');
 const queryString = 'SELECT * FROM "public"."knytes" WHERE "knyte_id" = \'' + serverBootloaderKnyteId + '\';';
-const serverContext = {app, uuid, io, auth, runQuery};
+const serverContext = {app, cors, uuid, io, auth, runQuery};
 runQuery(queryString).then( async (result) => {
     const serverBootloaderKnyte = result[0];
     try {
