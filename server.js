@@ -9,6 +9,8 @@ const http = require('http').Server(app);
 const pg = require('pg');
 const io = require('socket.io')(http);
 const connectionString = process.env.DATABASE_URL;
+const connectionString_1 = process.env.DATABASE_1_URL;
+const connectionString_2 = process.env.DATABASE_2_URL;
 const accessTokens = {
     godLike: process.env.GOD_LIKE_ACCESS_TOKEN,
     readOnly: process.env.READ_ONLY_ACCESS_TOKEN,
@@ -23,6 +25,12 @@ if (accessTokens.readOnly && uuidVersion(accessTokens.readOnly) !== 4)
     throw Error('Invalid version of accessTokens.readOnly');
 // common functions
 async function runQuery(queryString) {
+    if (!connectionString_1 && !connectionString_2)
+        return await runQuery_full(connectionString, queryString);
+    else
+        return await runQuery_readonly(queryString);
+}
+async function runQuery_full(connectionString, queryString) {
     const client = new pg.Client({
         connectionString,
         ssl: {
@@ -49,6 +57,18 @@ async function runQuery(queryString) {
         console.warn(e);
         return {error: e, step: 'client end'};
     }
+    return result;
+}
+async function runQuery_readonly(queryString) {
+    if (queryString.indexOf('SELECT ') !== 0)
+    {
+        const e = {query: queryString, message: 'only readonly queries are supported'};
+        console.warn(e);
+        return {error: e, step: 'query check'}
+    }
+    const result1 = await runQuery_full(connectionString_1, queryString);
+    const result2 = await runQuery_full(connectionString_2, queryString);
+    const result = result1.concat(result2);
     return result;
 }
 const auth = {
@@ -85,21 +105,28 @@ runQuery(queryString).then( async (result) => {
             ? res.sendFile(__dirname + resourceId)
             : res.status(404).end();
     });
-    const client = new pg.Client({
-        connectionString,
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    });
-    try {
-        await client.connect();
-        client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
-        await client.query('LISTEN watch_knytes_table');    
-        console.info(`\tserver is listening db.notify.channel.watch_knytes_table`);
-        http.listen(port, () => console.info(`\tserver is ready and running at port ${port}`));
-    } catch(e) {
-        console.error(`\tserver failed`);
-        console.error(e);
+    if (!connectionString_1 && !connectionString_2)
+    {
+        const client = new pg.Client({
+            connectionString,
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        });
+        try {
+            await client.connect();
+            client.on('notification', message => io.emit('chat message', JSON.stringify(message) ) );
+            await client.query('LISTEN watch_knytes_table');    
+            console.info(`\tserver is listening db.notify.channel.watch_knytes_table`);
+            http.listen(port, () => console.info(`\tserver-full is ready and running at port ${port}`));
+        } catch(e) {
+            console.error(`\tserver failed`);
+            console.error(e);
+        }        
+    }
+    else
+    {
+        http.listen(port, () => console.info(`\tserver-readonly is ready and running at port ${port}`));        
     }
 });
